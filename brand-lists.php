@@ -1,16 +1,16 @@
 <?php
 require_once "config.php";
 require_once "functions.php";
-$vResponse = [];
+
 $vQuery = "";
 parse_str($_SERVER['QUERY_STRING'], $vQuery);
 
-$vParam["api_url"] =  "catalog/products/category-assignments";
+$vParam["api_url"] =  "catalog/brands";
 if (isset($vQuery["limit"])) {
-    $vParam["api_url"] .=  "?limit=" . $vQuery["limit"];
+    $vParam["api_url"] .= "?limit=" . $vQuery["limit"];
 }
 if (isset($vQuery["page"])) {
-    $vParam["api_url"] .=  "&page=" . $vQuery["page"];
+    $vParam["api_url"] .= "?limit=" . $vQuery["limit"] . "&page=" . $vQuery["page"];
 }
 $vParam["method"] = "GET";
 

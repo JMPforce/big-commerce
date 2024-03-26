@@ -1,15 +1,14 @@
 <?php
 require_once "config.php";
 $vResponse = [];
+$vQuery = "";
+parse_str($_SERVER['QUERY_STRING'], $vQuery);
+
 if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
     $vPayload = json_decode(file_get_contents('php://input'), true);
 } else
     $vPayload = v::$a;
 
-$curl = curl_init();
-
-$vQuery = "";
-parse_str($_SERVER['QUERY_STRING'], $vQuery);
 if (empty($vQuery["product_id"])) {
     $vResponse["status"] = 400;
     $vResponse["error"] = "product_id parameter missing.";

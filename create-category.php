@@ -7,9 +7,6 @@ if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
 } else
     $vPayload = v::$a;
 
-
-$curl = curl_init();
-
 $vQuery = "";
 parse_str($_SERVER['QUERY_STRING'], $vQuery);
 
@@ -34,13 +31,14 @@ if (count($vResponse) > 0) {
     }
 } else {
 
-    $vPayloadBody[] = $vPayload;
+    // $vPayloadBody[] = $vPayload;
 
-    $vParam["api_url"] =  "catalog/trees/categories";
-    $vParam["method"] = "POST";
-    $vParam["body"] = $vPayloadBody;
+    // $vParam["api_url"] =  "catalog/trees/categories";
+    // $vParam["method"] = "POST";
+    // $vParam["body"] = $vPayloadBody;
 
-    $vResponse = call_big_commerce($vParam);
+    // $vResponse = call_big_commerce($vParam);
+     $vResponse = create_category($vPayload);
 
     if ($vResponse["status"]==400) {
         echo $vResponse["message"];

@@ -61,14 +61,14 @@ function call_big_commerce($vParam)
 {
     $curl = curl_init();
 
-    $vCurlArray[CURLOPT_URL] = $GLOBALS["vConfig"]["API_BASE"].$vParam["api_url"];
+    $vCurlArray[CURLOPT_URL] = $GLOBALS["vConfig"]["API_BASE"] . $vParam["api_url"];
     $vCurlArray[CURLOPT_RETURNTRANSFER] = true;
     $vCurlArray[CURLOPT_ENCODING] = "";
     $vCurlArray[CURLOPT_MAXREDIRS] = 10;
     $vCurlArray[CURLOPT_TIMEOUT] = 30;
     $vCurlArray[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_1;
     $vCurlArray[CURLOPT_CUSTOMREQUEST] = $vParam["method"];
-    if ($vParam["body"])
+    if (!empty($vParam["body"]))
         $vCurlArray[CURLOPT_POSTFIELDS] = json_encode($vParam["body"]);
     $vCurlArray[CURLOPT_HTTPHEADER] = [
         "Accept: application/json",
@@ -89,4 +89,25 @@ function call_big_commerce($vParam)
     } else {
         return ["status" => 200, "data" => json_decode($vResponse)];
     }
+}
+
+
+function create_category($vPayload)
+{
+    $vPayloadBody[] = $vPayload;
+
+    $vParam["api_url"] =  "catalog/trees/categories";
+    $vParam["method"] = "POST";
+    $vParam["body"] = $vPayloadBody;
+
+    return call_big_commerce($vParam);
+}
+
+function create_brand($vPayload)
+{
+    $vParam["api_url"] =  "catalog/brands";
+    $vParam["method"] = "POST";
+    $vParam["body"] = $vPayload;
+
+    return call_big_commerce($vParam);
 }
