@@ -10,9 +10,14 @@ if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
 } else
     $vPayload = v::$a;
 
-if (empty($vPayload["category_id"])) {
+if (empty($vPayload["brand_id"])) {
     $vResponse["status"] = 400;
-    $vResponse["error"] = "category_id parameter missing.";
+    $vResponse["error"] = "brand_id parameter missing.";
+}
+
+if (empty($vPayload["name"])) {
+    $vResponse["status"] = 400;
+    $vResponse["error"] = "name parameter missing.";
 }
 
 if (count($vResponse) > 0) {
@@ -22,14 +27,11 @@ if (count($vResponse) > 0) {
         v::$r = vR(400, $vResponse);
     }
 } else {
-
-    $vPayloadBody[] = $vPayload;
-
-    $vParam["api_url"] =  "catalog/trees/categories";
+    $vParam["api_url"] =  "catalog/brands/".$vPayload["brand_id"];
     $vParam["method"] = "PUT";
-    // unset($vPayload["category_id"]);
-    $vParam["body"] = $vPayloadBody;
-
+    unset($vPayload["brand_id"]);
+    $vParam["body"] = $vPayload;
+    // print_r($vParam);exit;
     $vResponse = call_big_commerce($vParam);
 
     if ($vResponse["status"] == 400) {

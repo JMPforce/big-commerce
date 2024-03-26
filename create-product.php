@@ -33,6 +33,23 @@ if (empty($vPayload["price"])) {
     $vResponse["error"] = "price parameter missing.";
 }
 
+if (!empty($vPayload["category_name"])) {
+    $vCategoryParam["name"] = $vPayload["category_name"];
+    $vCategoryParam["parent_id"] = 0;
+    $vCategoryParam["tree_id"] = 1;
+    $vCategoryResponse = create_category($vCategoryParam);
+
+    if (isset($vCategoryResponse["status"]) && $vCategoryResponse["status"] == 400) {
+        if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
+            echo json_encode($vCategoryResponse);
+        else
+            v::$r = vR(400, $vCategoryResponse["message"]);
+        exit;
+    } else {
+    $vPayload["categories"] = [$vCategoryResponse["0"]->category_id];
+    }
+}
+
 if (count($vResponse) > 0) {
     if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
         echo json_encode($vResponse);
@@ -44,14 +61,22 @@ if (count($vResponse) > 0) {
     $vParam["method"] = "POST";
     $vParam["body"] = $vPayload;
 
-    $vResponse = call_big_commerce($vParam);
+    $vReturnData = call_big_commerce($vParam);
+    
+    $vError = "";
+    if (!isset($vReturnData->data)) {
+        $vError = $vReturnData["message"];
+    }
 
-    if ($vResponse["status"] == 400) {
-        echo $vResponse["message"];
+    if ($vError == "") {
+        if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
+            echo json_encode($vReturnData);
+        } else
+            v::$r = vR(200, $vReturnData);
     } else {
-        if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-            echo json_encode($vResponse["data"]);
-        else
-            v::$r = vR(200, $vResponse["data"]);
+        if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
+            echo $vError;
+        } else
+            v::$r = vR(400, [$vError]);
     }
 }

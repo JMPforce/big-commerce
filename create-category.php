@@ -30,22 +30,14 @@ if (count($vResponse) > 0) {
         v::$r = vR(400, $vResponse);
     }
 } else {
+    $vReturnData = create_category($vPayload);
 
-    // $vPayloadBody[] = $vPayload;
-
-    // $vParam["api_url"] =  "catalog/trees/categories";
-    // $vParam["method"] = "POST";
-    // $vParam["body"] = $vPayloadBody;
-
-    // $vResponse = call_big_commerce($vParam);
-     $vResponse = create_category($vPayload);
-
-    if ($vResponse["status"]==400) {
-        echo $vResponse["message"];
+    if ($vReturnData["status"] == 400) {
+        echo json_encode($vReturnData);
     } else {
         if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-            echo json_encode($vResponse["data"]);
+            echo json_encode($vReturnData["data"]);
         else
-            v::$r = vR(200, $vResponse["data"]);
+            v::$r = vR(200, $vReturnData["data"]);
     }
 }

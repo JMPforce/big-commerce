@@ -78,8 +78,9 @@ function call_big_commerce($vParam)
 
     curl_setopt_array($curl, $vCurlArray);
 
-
     $vResponse = curl_exec($curl);
+    $vReturnData = json_decode($vResponse);
+    // print_r($vReturnData);
     $err = curl_error($curl);
 
     curl_close($curl);
@@ -87,7 +88,10 @@ function call_big_commerce($vParam)
     if ($err) {
         return ["status" => 400, "message" => "cURL Error #:" . $err];
     } else {
-        return ["status" => 200, "data" => json_decode($vResponse)];
+        if (isset($vReturnData->status) && $vReturnData->status != 200) {
+            return ["status" => 400, "message" => ($vReturnData->title) ? $vReturnData->title : "API call error, Check your payload."];
+        } else
+            return $vReturnData;
     }
 }
 
@@ -100,7 +104,15 @@ function create_category($vPayload)
     $vParam["method"] = "POST";
     $vParam["body"] = $vPayloadBody;
 
-    return call_big_commerce($vParam);
+    $vReturn = call_big_commerce($vParam);
+    print_r($vReturn);
+    if (isset($vReturn->errors)) {
+        return ["status" => 400, "message" => $vReturn->errors->title];
+    } elseif (isset($vReturn->data)) {
+        return $vReturn->data;
+    } else {
+        return $vReturn;
+    }
 }
 
 function create_brand($vPayload)
