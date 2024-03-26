@@ -10,7 +10,7 @@ if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
     $vPayload = v::$a;
 
 parse_str($_SERVER['QUERY_STRING'], $vQuery);
-if (empty($vQuery["product_id"])) {
+if (empty($vPayload["product_id"])) {
     $vResponse["status"] = 400;
     $vResponse["error"] = "product_id parameter missing.";
 }
@@ -22,18 +22,18 @@ if (count($vResponse) > 0) {
         v::$r = vR(400, $vResponse);
     }
 } else {
-    $vParam["api_url"] =  "catalog/products/" . $vQuery["product_id"];
+    $vParam["api_url"] =  "catalog/products/" . $vPayload["product_id"];
     $vParam["method"] = "DELETE";
-    $vParam["body"] = $vPayload;
+    // $vParam["body"] = $vPayload;
 
-    $vResponse = call_big_commerce($vParam);
-
-    if ($vResponse["status"] == 400) {
-        echo $vResponse["message"];
+    $vReturnData = call_big_commerce($vParam);
+    print_r($vReturnData);
+    if (!isset($vReturnData->data)) {
+        echo json_encode($vReturnData);
     } else {
         if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-            echo json_encode($vResponse["data"]);
+            echo json_encode($vReturnData);
         else
-            v::$r = vR(200, $vResponse["data"]);
+            v::$r = vR(200, $vReturnData);
     }
 }

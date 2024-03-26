@@ -14,13 +14,13 @@ if (isset($vQuery["page"])) {
 }
 $vParam["method"] = "GET";
 
-$vResponse = call_big_commerce($vParam);
-
-if ($vResponse["status"] == 400) {
-    echo $vResponse["message"];
+$vReturnData = call_big_commerce($vParam);
+// print_r($vResponse);
+if (!isset($vReturnData->data)) {
+    echo json_encode($vReturnData);
 } else {
     if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-        echo json_encode($vResponse["data"]);
+        echo json_encode($vReturnData);
     else
-        v::$r = vR(200, $vResponse["data"]);
+        v::$r = vR(200, $vReturnData);
 }

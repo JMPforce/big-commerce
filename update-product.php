@@ -1,5 +1,6 @@
 <?php
 require_once "config.php";
+require_once "functions.php";
 $vResponse = [];
 $vQuery = "";
 parse_str($_SERVER['QUERY_STRING'], $vQuery);
@@ -9,7 +10,7 @@ if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
 } else
     $vPayload = v::$a;
 
-if (empty($vQuery["product_id"])) {
+if (empty($vPayload["product_id"])) {
     $vResponse["status"] = 400;
     $vResponse["error"] = "product_id parameter missing.";
 }
@@ -39,37 +40,20 @@ if (count($vResponse) > 0) {
         v::$r = vR(400, $vResponse);
     }
 } else {
-    foreach ($vPayload as $key => $val) {
-        $vPayloadBody[$key] = $val;
-    }
 
-    curl_setopt_array($curl, [
-        CURLOPT_URL => $GLOBALS["vConfig"]["API_BASE"] . "catalog/products/" . $vQuery["product_id"],
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 30,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "PUT",
-        CURLOPT_POSTFIELDS => json_encode($vPayloadBody),
-        CURLOPT_HTTPHEADER => [
-            "Accept: application/json",
-            "Content-Type: application/json",
-            "X-Auth-Token: " . $GLOBALS["vConfig"]["AUTH_TOKEN"]
-        ],
-    ]);
+    $vParam["api_url"] =  "catalog/products/" . $vPayload["product_id"];
+    $vParam["method"] = "PUT";
+    unset($vPayload["product_id"]);
+    $vParam["body"] = $vPayload;
 
-    $vResponse = curl_exec($curl);
-    $err = curl_error($curl);
+    $vReturnData = call_big_commerce($vParam);
 
-    curl_close($curl);
-
-    if ($err) {
-        echo "cURL Error #:" . $err;
+    if (!isset($vReturnData->data)) {
+        echo json_encode($vReturnData);
     } else {
         if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-            echo $vResponse;
+            echo json_encode($vReturnData);
         else
-            v::$r = vR(200, json_decode($vResponse));
+            v::$r = vR(200, $vReturnData);
     }
 }
