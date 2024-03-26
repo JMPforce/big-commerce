@@ -10,3 +10,4 @@ script/*
 .idea
 /.php_cs
 /*.cache
+config.php
