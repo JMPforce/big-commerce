@@ -10,11 +10,16 @@ Big commerce API to Manage products, pricing and orders.
   - [Create Product](#create-product)
   - [Product details](#product-details)
   - [Product delete](#product-delete)
-- [Categories](#category-lists)  
-  - [Category lists](#category-lists)
+- [Categories](#get-all-categories)  
+  - [Category lists](#get-all-categories)
   - [Category create](#category-create)
   - [Category details](#category-details)
   - [Category delete](#category-delete)
+- [Brands](#get-all-brands)  
+  - [Brands lists](#get-all-brands)
+  - [Brands create](#brand-create)
+  - [Brands details](#brand-details)
+  - [Brands delete](#brand-delete)
 
 
     
@@ -220,3 +225,38 @@ Sample Payload
   ]
 }
 ```
+
+
+#### Get all categories
+[(Back to top)](#table-of-contents)
+```http
+  GET /category-lists
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `limit` | `number` |  Controls the number of items per page in a limited (paginated) list of products. The default product limit is 50 with a maximum limit of 250. |
+| `page` | `number` |  Specifies the page number in a limited (paginated) list of products.|
+| `sort` | `string` |  Allowed values are id, name, sku | price | date_modified | date_last_imported | inventory_level | is_visible | total_sold|
+| `direction` | `string` | Sort direction. Acceptable values are: asc, desc.|
+| `id` | `number` | Filter items by ID.|
+| `name` | `string` | Filter items by name.|
+| `name:like` | `string` | Filter items by part of a name. For example, name:like=new returns brands with names that include new.|
+| `keyword` | `string` | Filter items by part of a name. For example, name:like=new returns brands with names that include new.|
+
+
+#### Get all brands
+[(Back to top)](#table-of-contents)
+```http
+  GET /brand-lists
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `limit` | `number` |  Controls the number of items per page in a limited (paginated) list of products. The default product limit is 50 with a maximum limit of 250. |
+| `page` | `number` |  Specifies the page number in a limited (paginated) list of products.|
+| `sort` | `string` |  Allowed values are id, name, sku | price | date_modified | date_last_imported | inventory_level | is_visible | total_sold|
+| `direction` | `string` | Sort direction. Acceptable values are: asc, desc.|
+| `id` | `number` | Filter items by ID.|
+| `name` | `string` | Filter items by name.|
+| `name:like` | `string` | Filter items by part of a name. For example, name:like=new returns brands with names that include new.|

@@ -6,11 +6,8 @@ $vQuery = "";
 parse_str($_SERVER['QUERY_STRING'], $vQuery);
 
 $vParam["api_url"] =  "catalog/trees/categories";
-if (isset($vQuery["limit"])) {
-    $vParam["api_url"] .= "?limit=" . $vQuery["limit"];
-}
-if (isset($vQuery["page"])) {
-    $vParam["api_url"] .= "?limit=" . $vQuery["limit"] . "&page=" . $vQuery["page"];
+if (isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] != "") {
+    $vParam["api_url"] .= "?" . $_SERVER['QUERY_STRING'];
 }
 $vParam["method"] = "GET";
 
