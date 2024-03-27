@@ -297,10 +297,6 @@ Sample Payload
 | `email` | `string` | **Required**. The email of the customer. Must be unique. >= 3 characters<= 255 characters|
 | `first_name` | `string` | **Required**. The first name of the customer. >= 1 characters<= 100 characters|
 | `last_name` | `string` | **Required**. The first name of the customer. >= 1 characters<= 100 characters|
-| `price` | `number` | **Required**. The price of the product. The price should include or exclude tax, based on the store settings.|
-| `weight` | `number` | **Required**. Weight of the product, which can be used when calculating shipping costs. This is based on the unit set on the store|
-| `categories` | `array` | Existing category id as array, like [22,23]|
-| `category_name` | `string` | Unique category name to create during product creation |
 
 
 Sample Payload
@@ -359,3 +355,40 @@ Sample Payload
   }
 ]
 ```
+
+#### Update customer
+[(Back to top)](#table-of-contents)
+```http
+  GET /update-customer
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `id` | `string` | **Required**. ID of the Customer This must be included in the request body|
+
+
+Sample payload
+```bash
+{
+    "id": 1,
+    "email": "sahbajuddin@gmail.com",
+    "first_name": "Sahbaj",
+    "last_name": "Uddin",
+    "company": "bGlobal",
+    "phone": "123456",
+    "notes": "string",
+    "tax_exempt_category": "string",
+    "customer_group_id": 0
+    
+}
+```
+
+#### Delete customer
+[(Back to top)](#table-of-contents)
+```http
+  GET /delete-customer
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `id:in` | `string` | **Required**. Filter items by ID. id:in=4,5,6|

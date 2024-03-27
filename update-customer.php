@@ -3,16 +3,16 @@ require_once "config.php";
 require_once "functions.php";
 $vResponse = [];
 $vQuery = "";
+parse_str($_SERVER['QUERY_STRING'], $vQuery);
 
 if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
     $vPayload = json_decode(file_get_contents('php://input'), true);
 } else
     $vPayload = v::$a;
 
-parse_str($_SERVER['QUERY_STRING'], $vQuery);
-if (empty($vPayload["product_id"])) {
+if (empty($vPayload["id"])) {
     $vResponse["status"] = 400;
-    $vResponse["error"] = "product_id parameter missing.";
+    $vResponse["error"] = "id parameter missing.";
 }
 
 if (count($vResponse) > 0) {
@@ -22,12 +22,15 @@ if (count($vResponse) > 0) {
         v::$r = vR(400, $vResponse);
     }
 } else {
-    $vParam["api_url"] =  "catalog/products/" . $vPayload["product_id"];
-    $vParam["method"] = "DELETE";
-    // $vParam["body"] = $vPayload;
+
+    $vPayloadBody[] = $vPayload;
+
+    $vParam["api_url"] =  "customers";
+    $vParam["method"] = "PUT";
+    $vParam["body"] = $vPayloadBody;
 
     $vReturnData = call_big_commerce($vParam);
-    // print_r($vReturnData);
+
     if (!isset($vReturnData->data)) {
         echo json_encode($vReturnData);
     } else {

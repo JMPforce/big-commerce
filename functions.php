@@ -60,7 +60,7 @@ function find_brand($name)
 function call_big_commerce($vParam)
 {
     $curl = curl_init();
-
+// print_r($vParam);
     $vCurlArray[CURLOPT_URL] = $GLOBALS["vConfig"]["API_BASE"] . $vParam["api_url"];
     $vCurlArray[CURLOPT_RETURNTRANSFER] = true;
     $vCurlArray[CURLOPT_ENCODING] = "";
