@@ -123,3 +123,13 @@ function create_brand($vPayload)
 
     return call_big_commerce($vParam);
 }
+
+function create_customer($vPayload)
+{
+    $vPayloadBody[] = $vPayload;
+    $vParam["api_url"] =  "customers";
+    $vParam["method"] = "POST";
+    $vParam["body"] = $vPayloadBody;
+
+    return call_big_commerce($vParam);
+}

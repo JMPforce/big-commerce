@@ -20,6 +20,11 @@ Big commerce API to Manage products, pricing and orders.
   - [Brands create](#brand-create)
   - [Brands details](#brand-details)
   - [Brands delete](#brand-delete)
+- [Customers](#get-all-customers)  
+  - [Customer lists](#get-all-customers)
+  - [Customer create](#customer-create)
+  - [Brands details](#brand-details)
+  - [Brands delete](#brand-delete)
 
 
     
@@ -47,7 +52,7 @@ Big commerce API to Manage products, pricing and orders.
 | `sku` | `string` | Filter items by main SKU. To filter by variant SKU, see Get All Variants.|
 
 #### Product details
-
+[(Back to top)](#table-of-contents)
 ```http
   GET /get-product
 ```
@@ -59,7 +64,7 @@ Payload
 ```
 
 #### Create product
-
+[(Back to top)](#table-of-contents)
 ```http
   GET /create-product
 ```
@@ -260,3 +265,97 @@ Sample Payload
 | `id` | `number` | Filter items by ID.|
 | `name` | `string` | Filter items by name.|
 | `name:like` | `string` | Filter items by part of a name. For example, name:like=new returns brands with names that include new.|
+
+
+#### Get all customers
+[(Back to top)](#table-of-contents)
+```http
+  GET /customer-lists
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `limit` | `number` |  Controls the number of items per page in a limited (paginated) list of products. The default product limit is 50 with a maximum limit of 250. |
+| `page` | `number` |  Specifies the page number in a limited (paginated) list of products.|
+| `sort` | `string` |  Allowed values are id, name, sku | price | date_modified | date_last_imported | inventory_level | is_visible | total_sold|
+| `direction` | `string` | Sort direction. Acceptable values are: asc, desc.|
+| `id` | `number` | Filter items by ID.|
+| `name:in` | `array` | Filter items by first_name and last_name. name=james moriarty|
+| `name:like` | `array` | Filter items by substring in first_name and last_name. name:like=moriarty, sherlock Concatenates the first_name and last_name fields.|
+| `company:in` | `array` | Filter items by company. company:in=bigcommerce,commongood|
+| `email:in` | `array` | Filter items by email. email:in=janedoe@example.com|
+
+
+#### Create customer
+[(Back to top)](#table-of-contents)
+```http
+  GET /create-customer
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `email` | `string` | **Required**. The email of the customer. Must be unique. >= 3 characters<= 255 characters|
+| `first_name` | `string` | **Required**. The first name of the customer. >= 1 characters<= 100 characters|
+| `last_name` | `string` | **Required**. The first name of the customer. >= 1 characters<= 100 characters|
+| `price` | `number` | **Required**. The price of the product. The price should include or exclude tax, based on the store settings.|
+| `weight` | `number` | **Required**. Weight of the product, which can be used when calculating shipping costs. This is based on the unit set on the store|
+| `categories` | `array` | Existing category id as array, like [22,23]|
+| `category_name` | `string` | Unique category name to create during product creation |
+
+
+Sample Payload
+```bash
+[
+  {
+    "email": "string@example.com",
+    "first_name": "string",
+    "last_name": "string",
+    "company": "string",
+    "phone": "string",
+    "notes": "string",
+    "tax_exempt_category": "string",
+    "customer_group_id": 0,
+    "addresses": [
+      {
+        "address1": "Addr 1",
+        "address2": "",
+        "address_type": "residential",
+        "city": "San Francisco",
+        "company": "History",
+        "country_code": "US",
+        "first_name": "Ronald",
+        "last_name": "Swimmer",
+        "phone": "707070707",
+        "postal_code": "33333",
+        "state_or_province": "California",
+        "form_fields": [
+          {
+            "name": "test",
+            "value": "test"
+          }
+        ]
+      }
+    ],
+    "authentication": {
+      "force_password_reset": true,
+      "new_password": "string123"
+    },
+    "accepts_product_review_abandoned_cart_emails": true,
+    "store_credit_amounts": [
+      {
+        "amount": 43.15
+      }
+    ],
+    "origin_channel_id": 1,
+    "channel_ids": [
+      1
+    ],
+    "form_fields": [
+      {
+        "name": "test",
+        "value": "test"
+      }
+    ]
+  }
+]
+```
