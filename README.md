@@ -22,9 +22,14 @@ Big commerce API to Manage products, pricing and orders.
   - [Brands delete](#brand-delete)
 - [Customers](#get-all-customers)  
   - [Customer lists](#get-all-customers)
-  - [Customer create](#customer-create)
-  - [Brands details](#brand-details)
-  - [Brands delete](#brand-delete)
+  - [Create customer](#create-customer)
+  - [Customer update](#customer-update)
+  - [Customer delete](#customer-delete)
+- [Customer Address](#get-all-customer-addresses)  
+  - [Customer address lists](#get-all-customer-addresses)
+  - [Create customer address](#create-customer-address)
+  - [Update customer address](#update-customer-address)
+  - [Delete customer address](#delete-customer-address)
 
 
     
@@ -301,7 +306,6 @@ Sample Payload
 
 Sample Payload
 ```bash
-[
   {
     "email": "string@example.com",
     "first_name": "string",
@@ -353,7 +357,6 @@ Sample Payload
       }
     ]
   }
-]
 ```
 
 #### Update customer
@@ -387,6 +390,110 @@ Sample payload
 [(Back to top)](#table-of-contents)
 ```http
   GET /delete-customer
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `id:in` | `string` | **Required**. Filter items by ID. id:in=4,5,6|
+
+
+#### Get all customers addresses
+[(Back to top)](#table-of-contents)
+```http
+  GET /customer-address-lists
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `limit` | `number` |  Items count per page. |
+| `page` | `number` |  Page number. page=1|
+| `id:in` | `array` | Filter items by ID. id:in=4,5,6|
+| `customer_id:in` | `array` | Filter items by customer_id. customer_id:in=4,5,6|
+| `name:in` | `array` | Filter items by first_name and last_name. name=james moriarty|
+| `company:in` | `array` | Filter items by company. company:in=bigcommerce,commongood|
+
+
+
+#### Create customer address
+[(Back to top)](#table-of-contents)
+```http
+  GET /create-customer-address
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `customer_id` | `number` | **Required**. Customer ID|
+| `first_name` | `string` | **Required**. The first name of the customer address. >= 1 characters<= 255 characters|
+| `last_name` | `string` | **Required**. The first name of the customer address. >= 1 characters<= 255 characters|
+| `address1` | `string` | **Required**. The address 1 line. Example 123 Example Street|
+| `city` | `string` | **Required**. The city of the customer address. >= 0 characters<= 100 characters|
+| `state_or_province` | `string` | **Required**. The state or province name spelled out in full. It is required for countries that need a state/province to complete an address. State or province codes not accepted. >= 0 characters<= 100 characters|
+| `postal_code` | `string` | **Required**. The postal code of the customer address. It is required for countries that need postal codes to complete an address. >= 0 characters<= 30 characters|
+| `country_code` | `string` | **Required**. The country code of the customer address. >= 2 characters<= 2 characters|
+
+
+Sample Payload
+```bash
+  {
+    "first_name": "John",
+    "last_name": "Doe",
+    "address1": "111 E West Street",
+    "address2": "654",
+    "city": "Akron",
+    "state_or_province": "Ohio",
+    "postal_code": "44325",
+    "country_code": "US",
+    "phone": "1234567890",
+    "address_type": "residential",
+    "customer_id": 11,
+    "form_fields": [
+      {
+        "name": "test",
+        "value": "test"
+      }
+    ]
+  }
+```
+
+#### Update customer address
+[(Back to top)](#table-of-contents)
+```http
+  GET /update-customer-address
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `id` | `string` | **Required**. ID of the Customer This must be included in the request body|
+
+
+Sample payload
+```bash
+  {
+    "id": 11,
+    "first_name": "John",
+    "last_name": "Doe",
+    "address1": "111 E West Street",
+    "address2": "654",
+    "city": "Akron",
+    "state_or_province": "Ohio",
+    "postal_code": "44325",
+    "country_code": "US",
+    "phone": "1234567890",
+    "address_type": "residential",
+    "form_fields": [
+      {
+        "name": "test",
+        "value": "test"
+      }
+    ]
+  }
+```
+
+
+#### Delete customer address
+[(Back to top)](#table-of-contents)
+```http
+  GET /delete-customer-address
 ```
 
 | Parameter | Type     | Description                |
