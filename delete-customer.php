@@ -29,7 +29,7 @@ if (count($vResponse) > 0) {
     
     $vParam["method"] = "DELETE";
 
-    $vReturnData = call_big_commerce($vParam);
+    $vReturnData = call_big_commerce_api($vParam);
     
     if (!isset($vReturnData->data)) {
         echo json_encode($vReturnData);

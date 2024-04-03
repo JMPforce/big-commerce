@@ -27,7 +27,7 @@ if (count($vResponse) > 0) {
     $vParam["api_url"] =  "catalog/brands/" . $vPayload["brand_id"];
     $vParam["method"] = "GET";
 
-    $vReturnData = call_big_commerce($vParam);
+    $vReturnData = call_big_commerce_api($vParam);
 
     if (!isset($vReturnData->data)) {
         echo json_encode($vReturnData);

@@ -32,7 +32,7 @@ if (count($vResponse) > 0) {
     unset($vPayload["brand_id"]);
     $vParam["body"] = $vPayload;
     
-    $vReturnData = call_big_commerce($vParam);
+    $vReturnData = call_big_commerce_api($vParam);
 
     if (!isset($vReturnData->data)) {
         echo json_encode($vReturnData);

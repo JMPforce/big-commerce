@@ -61,7 +61,7 @@ if (count($vResponse) > 0) {
     $vParam["method"] = "POST";
     $vParam["body"] = $vPayload;
 
-    $vReturnData = call_big_commerce($vParam);
+    $vReturnData = call_big_commerce_api($vParam);
     
     $vError = "";
     if (!isset($vReturnData->data)) {

@@ -14,7 +14,7 @@ if (isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] != "") {
 
 $vParam["method"] = "GET";
 
-$vReturnData = call_big_commerce($vParam);
+$vReturnData = call_big_commerce_api($vParam);
 
 if (!isset($vReturnData->data)) {
     echo json_encode($vReturnData);

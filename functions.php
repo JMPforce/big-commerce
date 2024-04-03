@@ -57,7 +57,7 @@ function find_brand($name)
 }
 
 
-function call_big_commerce($vParam)
+function call_big_commerce_api($vParam)
 {
     $curl = curl_init();
 // print_r($vParam);
@@ -104,7 +104,7 @@ function create_category($vPayload)
     $vParam["method"] = "POST";
     $vParam["body"] = $vPayloadBody;
 
-    $vReturn = call_big_commerce($vParam);
+    $vReturn = call_big_commerce_api($vParam);
     // print_r($vReturn);
     if (isset($vReturn->errors)) {
         return ["status" => 400, "message" => $vReturn->errors->title];
@@ -121,7 +121,7 @@ function create_brand($vPayload)
     $vParam["method"] = "POST";
     $vParam["body"] = $vPayload;
 
-    return call_big_commerce($vParam);
+    return call_big_commerce_api($vParam);
 }
 
 function create_customer($vPayload)
@@ -131,7 +131,7 @@ function create_customer($vPayload)
     $vParam["method"] = "POST";
     $vParam["body"] = $vPayloadBody;
 
-    return call_big_commerce($vParam);
+    return call_big_commerce_api($vParam);
 }
 
 function create_customer_address($vPayload)
@@ -141,7 +141,7 @@ function create_customer_address($vPayload)
     $vParam["method"] = "POST";
     $vParam["body"] = $vPayloadBody;
 
-    return call_big_commerce($vParam);
+    return call_big_commerce_api($vParam);
 }
 
 function update_customer_address($vPayload)
@@ -151,5 +151,5 @@ function update_customer_address($vPayload)
     $vParam["method"] = "PUT";
     $vParam["body"] = $vPayloadBody;
 
-    return call_big_commerce($vParam);
+    return call_big_commerce_api($vParam);
 }
