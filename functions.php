@@ -105,7 +105,7 @@ function create_category($vPayload)
     $vParam["body"] = $vPayloadBody;
 
     $vReturn = call_big_commerce($vParam);
-    print_r($vReturn);
+    // print_r($vReturn);
     if (isset($vReturn->errors)) {
         return ["status" => 400, "message" => $vReturn->errors->title];
     } elseif (isset($vReturn->data)) {
@@ -129,6 +129,26 @@ function create_customer($vPayload)
     $vPayloadBody[] = $vPayload;
     $vParam["api_url"] =  "customers";
     $vParam["method"] = "POST";
+    $vParam["body"] = $vPayloadBody;
+
+    return call_big_commerce($vParam);
+}
+
+function create_customer_address($vPayload)
+{
+    $vPayloadBody[] = $vPayload;
+    $vParam["api_url"] =  "customers/addresses";
+    $vParam["method"] = "POST";
+    $vParam["body"] = $vPayloadBody;
+
+    return call_big_commerce($vParam);
+}
+
+function update_customer_address($vPayload)
+{
+    $vPayloadBody[] = $vPayload;
+    $vParam["api_url"] =  "customers/addresses";
+    $vParam["method"] = "PUT";
     $vParam["body"] = $vPayloadBody;
 
     return call_big_commerce($vParam);
