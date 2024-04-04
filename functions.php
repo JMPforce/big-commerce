@@ -1,6 +1,79 @@
 <?php
 require_once "config.php";
 
+function db_connection()
+{
+    if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
+        $db = "sandbox";
+    } else {
+        $db = "prod";
+    }
+
+    $credentials = fetchCredentials();
+    try {
+        $connection = pg_connect("postgresql://" . $credentials["postgres"][$db]["username"] . ":" . $credentials["postgres"][$db]["password"] . "@" . $credentials["postgres"][$db]["host"] . ":" . $credentials["postgres"][$db]["port"] . "/" . $credentials["postgres"][$db]["database"]) or die('Could not connect: ' . pg_last_error());
+        pg_set_client_encoding($connection, "UNICODE");
+        return $connection;
+    } catch (Exception $e) {
+        throw new Exception($e->getMessage());
+    }
+}
+
+function fetchCredentials($vType = "auth")
+{
+    if ($vType == "config") {
+        $vJsonString = file_get_contents(ROOT_PATH . "/config.json");
+    } else {
+        $vJsonString = file_get_contents(ROOT_PATH . "/auth.json");
+    }
+    return  json_decode($vJsonString, true);
+}
+
+function closeConnection($conn)
+{
+    pg_close($conn);
+}
+
+function select($conn, $query = "", $params = [])
+{
+    try {
+        // $sql = pg_query($this->connection, $query) or die('Query failed: ' . pg_last_error());
+        $sql = pg_query($conn, $query) or die('Query failed: ' . pg_last_error());
+        $result = pg_fetch_all($sql, PGSQL_ASSOC);
+        pg_free_result($sql);
+        // $this->close();
+        return $result;
+    } catch (Exception $e) {
+        throw new Exception($e->getMessage());
+    }
+    return false;
+}
+
+function insert($conn, $query = "", $params = [])
+{
+    try {
+        $sql = pg_query($conn, $query) or die('Query failed: ' . pg_last_error());
+        // $this->close();
+        return $sql;
+    } catch (Exception $e) {
+        throw new Exception($e->getMessage());
+    }
+    return false;
+}
+
+function randomString($n = 21)
+{
+    $vCharacters = '0123456789abcdefghijklmnopqrstuvwxyz';
+    $vRandomString = '';
+
+    for ($i = 0; $i < $n; $i++) {
+        $vIndex = rand(0, strlen($vCharacters) - 1);
+        $vRandomString .= $vCharacters[$vIndex];
+    }
+
+    return $vRandomString;
+}
+
 function find_brand($name)
 {
     $vResponse = [];
@@ -56,12 +129,13 @@ function find_brand($name)
     }
 }
 
-
-function call_big_commerce_api($vParam)
+function call_big_commerce_api($vParam, $api = "")
 {
     $curl = curl_init();
-// print_r($vParam);
-    $vCurlArray[CURLOPT_URL] = $GLOBALS["vConfig"]["API_BASE"] . $vParam["api_url"];
+    if ($api == "v2")
+        $vCurlArray[CURLOPT_URL] = $GLOBALS["vConfig"]["API_BASE_V2"] . $vParam["api_url"];
+    else
+        $vCurlArray[CURLOPT_URL] = $GLOBALS["vConfig"]["API_BASE"] . $vParam["api_url"];
     $vCurlArray[CURLOPT_RETURNTRANSFER] = true;
     $vCurlArray[CURLOPT_ENCODING] = "";
     $vCurlArray[CURLOPT_MAXREDIRS] = 10;
