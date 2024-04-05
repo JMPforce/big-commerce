@@ -27,7 +27,7 @@ if ((!empty($vPayload) && count($vPayload)) > 0) {
         v::$r = vR(200, $vReturnData);
 } else {
 
-    echo   $sql = "SELECT * FROM  {$vTable} WHERE scope='store/shipment/created' OR scope='store/shipment/updated' OR scope='store/shipment/deleted' ORDER BY created_at DESC";
+    $sql = "SELECT * FROM  {$vTable} WHERE scope='store/shipment/created' OR scope='store/shipment/updated' OR scope='store/shipment/deleted' ORDER BY created_at DESC";
     $result = select($connection, $sql);
     closeConnection($connection);
     $vReturnData = [];
