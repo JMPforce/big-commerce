@@ -21,7 +21,7 @@ function db_connection()
 
 function fetchCredentials($vType = "auth")
 {
-    if(file_exists("../../../../../auth.json")){
+    if(file_exists("../../auth.json")){
         echo"exists";
     }else{
         echo"no";
