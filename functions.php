@@ -21,11 +21,7 @@ function db_connection()
 
 function fetchCredentials($vType = "auth")
 {
-    if(file_exists("/var/www/v/v10.0/auth.json")){
-        echo"exists";
-    }else{
-        echo"no";
-    }
+    
     if ($vType == "config") {
         $vJsonString = file_get_contents(ROOT_PATH . "/config.json");
     } else {
