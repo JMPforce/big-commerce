@@ -30,6 +30,14 @@ Big commerce API to Manage products, pricing and orders.
   - [Create customer address](#create-customer-address)
   - [Update customer address](#update-customer-address)
   - [Delete customer address](#delete-customer-address)
+- [Order](#webhooks)  
+  - [Webhooks](#webhooks)
+  
+- [Webhooks](#webhooks)  
+  - [Webhooks](#webhooks)
+  - [Create webhooks](#create-webhooks)
+  - [Webhooks log](#webhooks-log)
+  - [Get Order Shipments](#get-order-shipments)
 
 
     
@@ -499,3 +507,44 @@ Sample payload
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
 | `id:in` | `string` | **Required**. Filter items by ID. id:in=4,5,6|
+
+
+
+#### Webhooks
+[(Back to top)](#table-of-contents)
+```http
+  POST /webhooks
+```
+Destination need to be set to this endpoint while creating webhook.
+
+
+#### Create webhooks
+[(Back to top)](#table-of-contents)
+```http
+  POST /create-webhooks
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `scope` | `string` | **Required**. Event you subscribe to. https://developer.bigcommerce.com/docs/webhooks/callbacks |
+| `destination` | `url` | **Required**. URL must be active, return a 200 response, and be served on port 443. Custom ports arenʼt currently supported. |
+| `is_active` | `boolean` | Boolean value that indicates whether the webhook is active or not. A webhook subscription becomes deactivated after 90 days of inactivity. Default is true |
+
+#### Webhooks log
+[(Back to top)](#table-of-contents)
+```http
+  GET /get-order-shipment
+```
+List all the Webhooks logs that was called from big-commerce during shipment created/updated/deleted events triggered
+
+
+#### Get Order Shipments
+[(Back to top)](#table-of-contents)
+```http
+  POST /get-order-shipment
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `order_id` | `number` | **Required**. order_id |
+
