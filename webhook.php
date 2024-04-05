@@ -20,10 +20,10 @@ $connection =db_connection();
 
 $data["id"] = randomString();
 $data["scope"] = $vPayload["scope"];
-$data["data"] = json_encode($vPayload["data"]);
+$data["meta"] = json_encode($vPayload["data"]);
 $data["payload"] = json_encode($vPayload);
 
-$sql = "INSERT INTO {$vTable} (id,scope,data,payload,created_at) values ('" . $data["id"] . "','" . $data["scope"] . "','" . $data["data"] . "','" . $data["payload"] . "',now()) RETURNING id";
+$sql = "INSERT INTO {$vTable} (id,scope,meta,payload,created_at) values ('" . $data["id"] . "','" . $data["scope"] . "','" . $data["meta"] . "','" . $data["payload"] . "',now()) RETURNING id";
 $result = insert($connection, $sql);
 closeConnection($connection);
 if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
