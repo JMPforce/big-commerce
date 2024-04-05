@@ -21,7 +21,7 @@ function db_connection()
 
 function fetchCredentials($vType = "auth")
 {
-    echo ROOT_PATH;
+    
     if ($vType == "config") {
         $vJsonString = file_get_contents(ROOT_PATH . "/config.json");
     } else {

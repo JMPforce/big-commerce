@@ -16,7 +16,7 @@ $connection =db_connection();
 
 
 // print_r($vPayload);
-exit;
+// exit;
 
 $data["id"] = randomString();
 $data["scope"] = $vPayload["scope"];
