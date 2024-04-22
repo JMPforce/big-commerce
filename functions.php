@@ -130,10 +130,10 @@ function find_brand($name)
     }
 }
 
-function call_big_commerce_api($vParam, $api = "")
+function call_big_commerce_api($vParam, $api_version = "")
 {
     $curl = curl_init();
-    if ($api == "v2")
+    if ($api_version == "v2")
         $vCurlArray[CURLOPT_URL] = $GLOBALS["vConfig"]["API_BASE_V2"] . $vParam["api_url"];
     else
         $vCurlArray[CURLOPT_URL] = $GLOBALS["vConfig"]["API_BASE"] . $vParam["api_url"];

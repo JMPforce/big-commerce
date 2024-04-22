@@ -18,7 +18,7 @@ if (isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] != "") {
     $vParam["api_url"] .= "?" . $_SERVER['QUERY_STRING'];
 }
 $vParam["method"] = "GET";
-
+print_r($vParam);
 $vReturnData = call_big_commerce_api($vParam);
 
 if (!isset($vReturnData->data)) {
