@@ -9,7 +9,19 @@ parse_str($_SERVER['QUERY_STRING'], $vQuery);
 
 $vParam["api_url"] =  "catalog/products";
 if (isset($vQuery["limit"])) {
-    $vQueryString .= "?limit=" . $vQuery["limit"];
+    $vParam["api_url"] .= "?limit=" . $vQuery["limit"];
+}else{
+    $vParam["api_url"] .= "?limit=10";
+}
+if (isset($vQuery["sort"])) {
+    $vParam["api_url"] .= "&sort=" . $vQuery["sort"];
+}else{
+    $vParam["api_url"] .= "&sort=name";
+}
+if (isset($vQuery["direction"])) {
+    $vParam["api_url"] .= "&direction=" . $vQuery["direction"];
+}else{
+    $vParam["api_url"] .= "&direction=asc";
 }
 if (isset($vQuery["page"])) {
     $vParam["api_url"] .= "&page=" . $vQuery["page"];
@@ -17,6 +29,7 @@ if (isset($vQuery["page"])) {
 if (isset($vQuery["categories:in"])) {
     $vParam["api_url"] .= "&categories:in=" . $vQuery["categories:in"];
 }
+
 // if (isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] != "") {
 //     $vParam["api_url"] .= "?" . $_SERVER['QUERY_STRING'];
 // }
