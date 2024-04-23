@@ -21,7 +21,7 @@ function db_connection()
 
 function fetchCredentials($vType = "auth")
 {
-    
+
     if ($vType == "config") {
         $vJsonString = file_get_contents(ROOT_PATH . "/config.json");
     } else {
@@ -129,6 +129,45 @@ function find_brand($name)
             return json_decode($vResponse);
     }
 }
+
+function call_aftership_api($vParam)
+{
+    $curl = curl_init();
+
+    $vCurlArray[CURLOPT_URL] = $GLOBALS["vConfig"]["AS_SHIPPING_SANDBOX_API"] . $vParam["api_url"];
+    $vCurlArray[CURLOPT_RETURNTRANSFER] = true;
+    $vCurlArray[CURLOPT_ENCODING] = "";
+    $vCurlArray[CURLOPT_MAXREDIRS] = 10;
+    $vCurlArray[CURLOPT_TIMEOUT] = 30;
+    $vCurlArray[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_1;
+    $vCurlArray[CURLOPT_CUSTOMREQUEST] = $vParam["method"];
+    if (!empty($vParam["body"]))
+        $vCurlArray[CURLOPT_POSTFIELDS] = json_encode($vParam["body"]);
+    $vCurlArray[CURLOPT_HTTPHEADER] = [
+        "Accept: application/json",
+        "Content-Type: application/json",
+        "as-api-key: " . $GLOBALS["vConfig"]["AS_API_KEY"]
+    ];
+
+    curl_setopt_array($curl, $vCurlArray);
+
+    $vResponse = curl_exec($curl);
+    $vReturnData = json_decode($vResponse);
+    // print_r($vReturnData);
+    $err = curl_error($curl);
+
+    curl_close($curl);
+
+    if ($err) {
+        return ["status" => 400, "message" => "cURL Error #:" . $err];
+    } else {
+        if (isset($vReturnData->status) && $vReturnData->status != 200) {
+            return ["status" => 400, "message" => ($vReturnData->title) ? $vReturnData->title : "API call error, Check your payload."];
+        } else
+            return $vReturnData;
+    }
+}
+
 
 function call_big_commerce_api($vParam, $api_version = "")
 {
