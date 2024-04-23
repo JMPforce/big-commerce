@@ -38,6 +38,8 @@ Big commerce API to Manage products, pricing and orders.
   - [Create webhooks](#create-webhooks)
   - [Webhooks log](#webhooks-log)
   - [Get Order Shipments](#get-order-shipments)
+- [Afterships API](#calculate-shipping-rates)  
+  - [Calculate shipping rates](#calculate-shipping-rates)
 
 
     
@@ -548,3 +550,154 @@ List all the Webhooks logs that was called from big-commerce during shipment cre
 | :-------- | :------- | :------------------------- |
 | `order_id` | `number` | **Required**. order_id |
 
+
+
+### Calculate shipping rates
+[(Back to top)](#table-of-contents)
+```http
+  POST /calculate-shipping-rates
+```
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `ship_from` | `Address` | **Required**. ship_from |
+| `ship_to` | `Address` | **Required**. ship_to |
+| `parcels` | `Array` | **Required**. parcels |
+
+#### ship_from
+[(Back to top)](#table-of-contents)
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `street1` | `String` | **Required**. street1, address_line1 of address |
+| `country` | `String` | **Required**. country, Country in ISO 3166-1 alpha 3 code |
+| `contact_name` | `String` | **Required**. contact_name, contact name of address |
+
+#### ship_to
+[(Back to top)](#table-of-contents)
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `street1` | `String` | **Required**. street1, address_line1 of address |
+| `country` | `String` | **Required**. country, Country in ISO 3166-1 alpha 3 code |
+| `contact_name` | `String` | **Required**. contact_name, contact name of address |
+
+#### parcels
+[(Back to top)](#table-of-contents)
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `box_type` | `String` | **Required**. box_type, Type of box for packaging |
+| `dimension` | `Dimension` | **Required**. dimension, Dimension object: the description of width/height/depth information |
+| `items` | `Array` | **Required**. items, items of package Item object, use to describe product to ship |
+| `weight` | `Weight` | **Required**. items, Weight object: unit weight of the item |
+
+####  dimension (parcels)
+[(Back to top)](#table-of-contents)
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `width` | `Number` | **Required**. width |
+| `height` | `Number` | **Required**. height |
+| `depth` | `Number` | **Required**. depth |
+| `unit` | `String` | **Required**. unit, Allowed values: cm, in, mm, m, ft, yd |
+
+#### items (parcels)
+[(Back to top)](#table-of-contents)
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `quantity` | `Integer` | **Required**. quantity, The quantity of the item Minimum: 1 |
+| `description` | `String` | **Required**. description, The description of the item |
+| `weight` | `Weight` | **Required**. weight, Weight object: unit weight of the item |
+
+####  Weight (items)
+[(Back to top)](#table-of-contents)
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `unit` | `String` | **Required**. unit, weight unit, Allowed values: lb, kg, oz, g |
+| `value` | `Number` | **Required**. value, value of Weight |
+
+####  return_to
+[(Back to top)](#table-of-contents)
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `street1` | `String` | **Required**. street1, address_line1 of address |
+| `country` | `String` | **Required**. country, Country in ISO 3166-1 alpha 3 code |
+| `contact_name` | `String` | **Required**. contact_name, contact name of address |
+
+
+
+Sample payload
+```bash
+{
+    "ship_from": {
+        "contact_name": "AfterShip Shipping",
+        "company_name": "AfterShip Shipping",
+        "street1": "230 W 200 S LBBY",
+        "city": "Salt Lake City",
+        "state": "UT",
+        "postal_code": "84101",
+        "country": "USA",
+        "phone": "123456789",
+        "email": "test@test.com"
+    },
+    "ship_to": {
+        "contact_name": "AfterShip Shipping",
+        "company_name": "AfterShip Shipping",
+        "street1": "230 W 200 S LBBY",
+        "city": "Salt Lake City",
+        "state": "UT",
+        "postal_code": "84101",
+        "country": "USA",
+        "phone": "123456789",
+        "email": "test@test.com"
+    },
+    "parcels": {
+        "box_type": "custom",
+        "dimension": {
+            "width": 10,
+            "height": 10,
+            "depth": 10,
+            "unit": "cm"
+        },
+        "items": [
+            {
+                "description": "Food Bar",
+                "quantity": 1,
+                "price": {
+                    "currency": "USD",
+                    "amount": 100
+                },
+                "item_id": "1234567",
+                "origin_country": "CHN",
+                "weight": {
+                    "unit": "kg",
+                    "value": 10
+                },
+                "sku": "imac2014",
+                "hs_code": "1006.30"
+            }
+        ],
+        "description": "Food XS",
+        "weight": {
+            "unit": "kg",
+            "value": 10
+        }
+    },
+    "return_to": {
+        "contact_name": "AfterShip Shipping",
+        "street1": "This is the first streeet",
+        "street2": "This is the second streeet",
+        "city": "New York",
+        "state": "New York",
+        "postal_code": "10001",
+        "country": "USA",
+        "phone": "1-123-456-5496",
+        "email": "test@test.test",
+        "type": "residential"
+    },
+    "delivery_instructions": "handle with care"
+}
+```
