@@ -618,6 +618,14 @@ List all the Webhooks logs that was called from big-commerce during shipment cre
 | `unit` | `String` | **Required**. unit, weight unit, Allowed values: lb, kg, oz, g |
 | `value` | `Number` | **Required**. value, value of Weight |
 
+####  Weight (parcels)
+[(Back to top)](#table-of-contents)
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `unit` | `String` | **Required**. unit, weight unit, Allowed values: lb, kg, oz, g |
+| `value` | `Number` | **Required**. value, value of Weight |
+
 ####  return_to
 [(Back to top)](#table-of-contents)
 
