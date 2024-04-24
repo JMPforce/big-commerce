@@ -720,4 +720,4 @@ Sample payload
 ```
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `tracking_code` | `String|Number` | **Required**. it can be order_id or tracking_number |
+| `tracking_code` | `String or Number` | **Required**. it can be order id or tracking number |
