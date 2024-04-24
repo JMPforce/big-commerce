@@ -13,7 +13,7 @@ if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
 
 $connection = db_connection();
 
-if ((!empty($vPayload) && count($vPayload)) > 0) {
+if ((!empty($vPayload) && !empty($vPayload["order_id"]))) {
     $vParam["api_url"] =  "orders/" . $vPayload["order_id"] . "/shipments";
     $vParam["method"] = "GET";
     unset($vPayload["order_id"]);
