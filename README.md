@@ -40,6 +40,7 @@ Big commerce API to Manage products, pricing and orders.
   - [Get Order Shipments](#get-order-shipments)
 - [Afterships API](#calculate-shipping-rates)  
   - [Calculate shipping rates](#calculate-shipping-rates)
+  - [Tracking order](#tracking-order)
 
 
     
@@ -551,8 +552,9 @@ List all the Webhooks logs that was called from big-commerce during shipment cre
 | `order_id` | `number` | **Required**. order_id |
 
 
+### Aftership API
 
-### Calculate shipping rates
+#### Calculate shipping rates
 [(Back to top)](#table-of-contents)
 ```http
   POST /calculate-shipping-rates
@@ -709,3 +711,13 @@ Sample payload
     "delivery_instructions": "handle with care"
 }
 ```
+
+
+#### Tracking order
+[(Back to top)](#table-of-contents)
+```http
+  POST /tracking-order
+```
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `tracking_code` | `String|Number` | **Required**. it can be order_id or tracking_number |

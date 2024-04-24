@@ -13,9 +13,9 @@ if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
     $vPayload = v::$a;
 
 
-if (empty($vPayload["tracking_id"])) {
+if (empty($vPayload["tracking_code"])) {
     $vResponse["status"] = 400;
-    $vResponse["error"] = "tracking_id parameter missing.";
+    $vResponse["error"] = "tracking_code parameter missing.";
 } else {
 }
 
@@ -26,27 +26,27 @@ if (count($vResponse) > 0) {
         v::$r = vR(400, $vResponse);
     }
 } else {
-    if (is_numeric($vPayload["tracking_id"])) {
-        $vParam["api_url"] =  "orders/" . $vPayload["tracking_id"] . "/shipments";
+    if (is_numeric($vPayload["tracking_code"])) {
+        $vParam["api_url"] =  "orders/" . $vPayload["tracking_code"] . "/shipments";
         $vParam["method"] = "GET";
         unset($vPayload["order_id"]);
         $vParam["body"] = $vPayload;
 
         $vReturnData = call_big_commerce_api($vParam, "v2");
-        echo $vReturnData->tracking_number;
+        // echo $vReturnData->tracking_number;
         if (isset($vReturnData->tracking_number))
             $tracking_id = $vReturnData->tracking_number;
         else
-            $tracking_id = $vPayload["tracking_id"];
+            $tracking_id = $vPayload["tracking_code"];
     } else {
-        $tracking_id = $vPayload["tracking_id"];
+        $tracking_id = $vPayload["tracking_code"];
     }
 
     $vParam2["api_url"] =  "trackings/".$tracking_id;
     $vParam2["method"] = "GET";
-    // print_r($vParam2);
+    
     $vReturnData = call_aftership_tracking_api($vParam2);
-    // print_r($vReturnData);
+    
     if (!isset($vReturnData->data)) {
         echo json_encode($vReturnData);
     } else {
