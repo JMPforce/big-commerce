@@ -209,6 +209,7 @@ function call_aftership_api($vParam)
 
 function call_big_commerce_api($vParam, $api_version = "")
 {
+    // echo $GLOBALS["vConfig"]["API_BASE"] . $vParam["api_url"];
     $curl = curl_init();
     if ($api_version == "v2")
         $vCurlArray[CURLOPT_URL] = $GLOBALS["vConfig"]["API_BASE_V2"] . $vParam["api_url"];
@@ -220,6 +221,7 @@ function call_big_commerce_api($vParam, $api_version = "")
     $vCurlArray[CURLOPT_TIMEOUT] = 30;
     $vCurlArray[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_1;
     $vCurlArray[CURLOPT_CUSTOMREQUEST] = $vParam["method"];
+    
     if (!empty($vParam["body"]))
         $vCurlArray[CURLOPT_POSTFIELDS] = json_encode($vParam["body"]);
     $vCurlArray[CURLOPT_HTTPHEADER] = [

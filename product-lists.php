@@ -13,6 +13,7 @@ if (isset($vQuery["limit"])) {
 }else{
     $vParam["api_url"] .= "?limit=10";
 }
+$vParam["api_url"] .= "&include=images";
 if (isset($vQuery["sort"])) {
     $vParam["api_url"] .= "&sort=" . $vQuery["sort"];
 }else{
@@ -28,6 +29,11 @@ if (isset($vQuery["page"])) {
 }
 if (isset($vQuery["categories:in"])) {
     $vParam["api_url"] .= "&categories:in=" . $vQuery["categories:in"];
+}
+if (isset($vQuery["include_fields"])) {
+    $vParam["api_url"] .= "&include_fields=" . $vQuery["include_fields"];
+}else{
+    $vParam["api_url"] .= "&include_fields=id,name,price,categories,description,type,sku,weight,height,depth,page_title,meta_keywords,meta_description,custom_url";
 }
 
 // if (isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] != "") {

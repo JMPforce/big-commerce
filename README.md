@@ -66,6 +66,7 @@ Big commerce API to Manage products, pricing and orders.
 | `keyword` | `string` | Filter items by keywords found in the name or sku fields.|
 | `categories:in` | `array` | Filter items by categories. Use for products in multiple categories. For example, categories:in=12,15.|
 | `sku` | `string` | Filter items by main SKU. To filter by variant SKU, see Get All Variants.|
+| `include_fields` | `array` | Fields to include, in a comma-separated list. The ID and the specified fields will be returned.|
 
 #### Product details
 [(Back to top)](#table-of-contents)
