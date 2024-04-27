@@ -1,6 +1,7 @@
 <?php
 require_once "config.php";
 require_once "functions.php";
+
 $vResponse = [];
 if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
     $vPayload = json_decode(file_get_contents('php://input'), true);
@@ -37,6 +38,7 @@ if (count($vResponse) > 0) {
         v::$r = vR(400, $vResponse);
     }
 } else {
+    
     $vReturnData = create_customer($vPayload);
 
     if (!isset($vReturnData->data)) {
