@@ -93,9 +93,9 @@ if (count($vResponse) > 0) {
                 call_big_commerce_api($vParam);
                 // echo json_encode($vReturnDataCart);
                 if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-                    echo json_encode($vReturnDataCart);
+                    echo json_encode($vReturnDataCart->data);
                 else
-                    v::$r = vR(200, $vReturnDataCart);
+                    v::$r = vR(200, $vReturnDataCart->data);
             }
         }
     }
