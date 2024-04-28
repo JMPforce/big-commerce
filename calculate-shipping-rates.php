@@ -90,6 +90,7 @@ if (empty($vPayload["parcels"])) {
         $vResponse["status"] = 400;
         $vResponse["error"] = "parcels items parameter missing.";
     } else {
+        $weight = 0;
         foreach ($vPayload["parcels"]["items"] as $key => $item) {
             if (empty($item["quantity"])) {
                 $vResponse["status"] = 400;
@@ -110,23 +111,15 @@ if (empty($vPayload["parcels"])) {
                 if (empty($item["weight"]["value"])) {
                     $vResponse["status"] = 400;
                     $vResponse["error"] = "parcels items." . $key . " weight value parameter missing.";
+                } else {
+                    $weight += ($item["quantity"] * $item["weight"]["value"]);
                 }
             }
         }
     }
-    if (empty($vPayload["parcels"]["weight"])) {
-        $vResponse["status"] = 400;
-        $vResponse["error"] = "parcels  weight parameter missing.";
-    } else {
-        if (empty($vPayload["parcels"]["weight"]["unit"])) {
-            $vResponse["status"] = 400;
-            $vResponse["error"] = "parcels  weight unit parameter missing.";
-        }
-        if (empty($vPayload["parcels"]["weight"]["value"])) {
-            $vResponse["status"] = 400;
-            $vResponse["error"] = "parcels weight value parameter missing.";
-        }
-    }
+    
+    $vPayload["parcels"]["weight"]["unit"] = "lb";
+    $vPayload["parcels"]["weight"]["value"] = $weight;
     if (count($vResponse) <= 0) {
         $vParam["body"]["shipment"]["parcels"][] = $vPayload["parcels"];
     }
@@ -152,7 +145,7 @@ if (empty($vPayload["parcels"])) {
         $vParam["body"]["shipment"]["return_to"] = $vPayload["return_to"];
     }
 }
-
+// print_r($vParam["body"]);exit;
 if (count($vResponse) > 0) {
     if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
         echo json_encode($vResponse);
@@ -167,8 +160,8 @@ if (count($vResponse) > 0) {
         echo json_encode($vReturnData);
     } else {
         if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-            echo json_encode($vReturnData);
+            echo json_encode($vReturnData->data);
         else
-            v::$r = vR(200, $vReturnData);
+            v::$r = vR(200, $vReturnData->data);
     }
 }
