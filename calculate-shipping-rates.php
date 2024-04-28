@@ -124,8 +124,8 @@ if (empty($vPayload["parcels"])) {
         $vParam["body"]["shipment"]["parcels"][] = $vPayload["parcels"];
     }
     if (empty($vPayload["return_to"])) {
-        $vResponse["status"] = 400;
-        $vResponse["error"] = "return_to parameter missing.";
+        // $vResponse["status"] = 400;
+        // $vResponse["error"] = "return_to parameter missing.";
     } else {
         if (empty($vPayload["return_to"]["contact_name"])) {
             $vResponse["status"] = 400;
@@ -142,7 +142,7 @@ if (empty($vPayload["parcels"])) {
     }
 
     if (count($vResponse) <= 0) {
-        $vParam["body"]["shipment"]["return_to"] = $vPayload["return_to"];
+        // $vParam["body"]["shipment"]["return_to"] = $vPayload["return_to"];
     }
 }
 // print_r($vParam["body"]);exit;
