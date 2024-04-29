@@ -2,9 +2,9 @@
 require_once "config.php";
 require_once "functions.php";
 $vQueryString = "";
-$vQuery = "";
+
 $vResponse = [];
-parse_str($_SERVER['QUERY_STRING'], $vQuery);
+
 
 $vParam["api_url"] =  "rates";
 $vParam["method"] = "POST";
@@ -123,27 +123,27 @@ if (empty($vPayload["parcels"])) {
     if (count($vResponse) <= 0) {
         $vParam["body"]["shipment"]["parcels"][] = $vPayload["parcels"];
     }
-    if (empty($vPayload["return_to"])) {
-        // $vResponse["status"] = 400;
-        // $vResponse["error"] = "return_to parameter missing.";
-    } else {
-        if (empty($vPayload["return_to"]["contact_name"])) {
-            $vResponse["status"] = 400;
-            $vResponse["error"] = "return_to contact_name parameter missing.";
-        }
-        if (empty($vPayload["return_to"]["street1"])) {
-            $vResponse["status"] = 400;
-            $vResponse["error"] = "return_to street1 parameter missing.";
-        }
-        if (empty($vPayload["return_to"]["country"])) {
-            $vResponse["status"] = 400;
-            $vResponse["error"] = "return_to country parameter missing.";
-        }
-    }
+    // if (empty($vPayload["return_to"])) {
+    //     // $vResponse["status"] = 400;
+    //     // $vResponse["error"] = "return_to parameter missing.";
+    // } else {
+    //     if (empty($vPayload["return_to"]["contact_name"])) {
+    //         $vResponse["status"] = 400;
+    //         $vResponse["error"] = "return_to contact_name parameter missing.";
+    //     }
+    //     if (empty($vPayload["return_to"]["street1"])) {
+    //         $vResponse["status"] = 400;
+    //         $vResponse["error"] = "return_to street1 parameter missing.";
+    //     }
+    //     if (empty($vPayload["return_to"]["country"])) {
+    //         $vResponse["status"] = 400;
+    //         $vResponse["error"] = "return_to country parameter missing.";
+    //     }
+    // }
 
-    if (count($vResponse) <= 0) {
-        // $vParam["body"]["shipment"]["return_to"] = $vPayload["return_to"];
-    }
+    // if (count($vResponse) <= 0) {
+    //     // $vParam["body"]["shipment"]["return_to"] = $vPayload["return_to"];
+    // }
 }
 // print_r($vParam["body"]);exit;
 if (count($vResponse) > 0) {
