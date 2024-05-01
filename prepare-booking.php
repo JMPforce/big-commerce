@@ -55,8 +55,8 @@ if (count($vResponse) > 0) {
     $vParam["body"]["currency"]["code"] = "USD";
     $vParam["body"]["locale"] = "en-US";
 
-    // print_r($vParam);exit;
     $vReturnData = call_big_commerce_api($vParam);
+    // print_r($vReturnData);
 
     if (!isset($vReturnData->data)) {
         echo json_encode($vReturnData);
@@ -83,12 +83,20 @@ if (count($vResponse) > 0) {
                 $vParam["api_url"] = "checkouts/" . $cartId . "/consignments";
                 foreach ($vPayload["shipping_address"] as $key => $shippingAddress) {
                     $consignments[$key]["shipping_address"] = $shippingAddress["shipping_address"];
-                    foreach ($vReturnData->data->line_items->physical_items as $key2=>$item) {
-                        $consignments[$key]["line_items"][$key2]["item_id"] = $item->id;
-                        $consignments[$key]["line_items"][$key2]["quantity"] = $item->quantity;
+                    if ($vReturnData->data->line_items->physical_items) {
+                        foreach ($vReturnData->data->line_items->physical_items as $key2 => $item) {
+                            $consignments[$key]["line_items"][$key2]["item_id"] = $item->id;
+                            $consignments[$key]["line_items"][$key2]["quantity"] = $item->quantity;
+                        }
+                    }
+                    if ($vReturnData->data->line_items->digital_items) {
+                        foreach ($vReturnData->data->line_items->digital_items as $key3 => $item) {
+                            $consignments[$key]["line_items"][$key3]["item_id"] = $item->id;
+                            $consignments[$key]["line_items"][$key3]["quantity"] = $item->quantity;
+                        }
                     }
                 }
-                $vParam["body"]= $consignments;
+                $vParam["body"] = $consignments;
                 // print_r($vParam);exit;
                 call_big_commerce_api($vParam);
                 // echo json_encode($vReturnDataCart);
