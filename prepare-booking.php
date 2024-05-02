@@ -99,7 +99,7 @@ if (count($vResponse) > 0) {
                     }
                 }
                 $vParam["body"] = $consignments;
-                // print_r($vParam);exit;
+            //    print_r($vParam);exit;
                 $vResponseConsignments = call_big_commerce_api($vParam);
                 // print_r($vResponseConsignments);
                 if (isset($vResponseConsignments->data)) {
