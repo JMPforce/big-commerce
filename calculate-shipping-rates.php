@@ -141,9 +141,9 @@ if (empty($vPayload["parcels"])) {
     //     }
     // }
 
-    // if (count($vResponse) <= 0) {
-    //     // $vParam["body"]["shipment"]["return_to"] = $vPayload["return_to"];
-    // }
+    if (isset($vPayload["ship_date"])) {
+        $vParam["body"]["ship_date"] = $vPayload["ship_date"];
+    }
 }
 // print_r($vParam["body"]);exit;
 if (count($vResponse) > 0) {
