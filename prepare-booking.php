@@ -64,6 +64,14 @@ if (count($vResponse) > 0) {
         unset($vParam["body"]);
         // echo json_encode($vReturnData);exit;
         $cartId = $vReturnData->data->id;
+        //stor cart meta 
+        $connection = db_connection();
+        $data["cart_id"] = randomString();
+        $data["meta"] = json_encode($vPayload["cart_meta"]);
+
+        $sql = "INSERT INTO {$vTable} (cart_id,meta,created) values ('" . $data["cart_id"] . "','" . $data["meta"] . "',now()) RETURNING id";
+        $result = insert($connection, $sql);
+        closeConnection($connection);
         //cart redirectu url
         $vParam["api_url"] =  "carts/" . $cartId . "/redirect_urls";
         $vParam["method"] = "POST";
@@ -99,7 +107,7 @@ if (count($vResponse) > 0) {
                     }
                 }
                 $vParam["body"] = $consignments;
-            //    print_r($vParam);exit;
+                //    print_r($vParam);exit;
                 $vResponseConsignments = call_big_commerce_api($vParam);
                 // print_r($vResponseConsignments);
                 if (isset($vResponseConsignments->data)) {
@@ -108,7 +116,7 @@ if (count($vResponse) > 0) {
                     else
                         v::$r = vR(200, $vResponseDataCart->data);
                 } else {
-                    echo json_encode($vResponseConsignments);    
+                    echo json_encode($vResponseConsignments);
                 }
             } else {
                 echo json_encode($vResponseDataBilling);
