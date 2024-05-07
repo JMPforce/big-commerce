@@ -1,7 +1,7 @@
 <?php
 require_once "config.php";
 require_once "functions.php";
-
+$vTable = "carts";
 $vResponse = [];
 if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
     $vPayload = json_decode(file_get_contents('php://input'), true);
