@@ -6,7 +6,7 @@ function db_connection()
     if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
         $db = "sandbox";
     } else {
-        $db = "vShip";
+        $db = "vship";
     }
 
     $credentials = fetchCredentials();
