@@ -66,10 +66,10 @@ if (count($vResponse) > 0) {
         $cartId = $vReturnData->data->id;
         //stor cart meta 
         $connection = db_connection();
-        $data["cart_id"] = randomString();
+        $data["cart_id"] = $cartId;
         $data["meta"] = json_encode($vPayload["cart_meta"]);
 
-        echo $sql = "INSERT INTO {$vTable} (cart_id,meta,created) values ('" . $data["cart_id"] . "','" . $data["meta"] . "',now()) RETURNING cart_id";
+        $sql = "INSERT INTO {$vTable} (cart_id,meta,created) values ('" . $data["cart_id"] . "','" . $data["meta"] . "',now()) RETURNING cart_id";
         $result = insert($connection, $sql);
         closeConnection($connection);
         //cart redirectu url
