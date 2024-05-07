@@ -69,7 +69,7 @@ if (count($vResponse) > 0) {
         $data["cart_id"] = randomString();
         $data["meta"] = json_encode($vPayload["cart_meta"]);
 
-        $sql = "INSERT INTO {$vTable} (cart_id,meta,created) values ('" . $data["cart_id"] . "','" . $data["meta"] . "',now()) RETURNING id";
+        echo $sql = "INSERT INTO {$vTable} (cart_id,meta,created) values ('" . $data["cart_id"] . "','" . $data["meta"] . "',now()) RETURNING cart_id";
         $result = insert($connection, $sql);
         closeConnection($connection);
         //cart redirectu url
