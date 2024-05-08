@@ -61,8 +61,8 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                     $vItems[$key]["price"]["amount"] = intval($row->base_price);
                     $vItems[$key]["origin_country"] = "USA";
                     $vItems[$key]["weight"]["unit"] = "lb";
-                    $vItems[$key]["weight"]["value"] = ($row->weight > 0) ? $row->weight : 2.20;
-                    $vTotalWeight += ($row->weight > 0) ? $row->weight : 2.20;
+                    $vItems[$key]["weight"]["value"] = intval($row->weight);
+                    $vTotalWeight += intval($row->weight);
                 }
             }
 
