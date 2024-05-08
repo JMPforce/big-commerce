@@ -46,7 +46,7 @@ if (count($vResponse) > 0) {
     $vParam2["method"] = "GET";
     
     $vReturnData = call_aftership_tracking_api($vParam2);
-    print_r($vReturnData);
+    // print_r($vReturnData);
     if (!isset($vReturnData->data)) {
         echo json_encode($vReturnData);
     } else {
