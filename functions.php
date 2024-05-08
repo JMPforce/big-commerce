@@ -153,7 +153,7 @@ function call_aftership_tracking_api($vParam)
 
     $vResponse = curl_exec($curl);
     $vReturnData = json_decode($vResponse);
-    // print_r($vReturnData);
+    
     $err = curl_error($curl);
 
     curl_close($curl);
@@ -191,7 +191,6 @@ function call_aftership_api($vParam)
 
     $vResponse = curl_exec($curl);
     $vReturnData = json_decode($vResponse);
-    // print_r($vReturnData);
     $err = curl_error($curl);
 
     curl_close($curl);
@@ -209,7 +208,6 @@ function call_aftership_api($vParam)
 
 function call_big_commerce_api($vParam, $api_version = "")
 {
-    // echo $GLOBALS["vConfig"]["API_BASE"] . $vParam["api_url"];
     $curl = curl_init();
     if ($api_version == "v2")
         $vCurlArray[CURLOPT_URL] = $GLOBALS["vConfig"]["API_BASE_V2"] . $vParam["api_url"];
@@ -221,7 +219,7 @@ function call_big_commerce_api($vParam, $api_version = "")
     $vCurlArray[CURLOPT_TIMEOUT] = 30;
     $vCurlArray[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_1;
     $vCurlArray[CURLOPT_CUSTOMREQUEST] = $vParam["method"];
-    
+
     if (!empty($vParam["body"]))
         $vCurlArray[CURLOPT_POSTFIELDS] = json_encode($vParam["body"]);
     $vCurlArray[CURLOPT_HTTPHEADER] = [
@@ -234,23 +232,40 @@ function call_big_commerce_api($vParam, $api_version = "")
 
     $vResponse = curl_exec($curl);
     $vReturnData = json_decode($vResponse);
-    // print_r($vReturnData);
     $err = curl_error($curl);
+    
 
     curl_close($curl);
-
-    if ($err) {
-        return ["status" => 400, "message" => "cURL Error #:" . $err];
+    if ($api_version == "v2") {
+        if ($vReturnData) {
+            return $vReturnData;
+        }
     } else {
-        if (isset($vReturnData->status) && $vReturnData->status != 200) {
-            return ["status" => 400, "message" => ($vReturnData->title) ? $vReturnData->title : "API call error, Check your payload."];
+        if ($err) {
+            return ["status" => 400, "message" => "cURL Error #:" . $err];
         } else {
-            if (is_array($vReturnData))
-                return $vReturnData[0];
-            else
-                return $vReturnData;
+            if (isset($vReturnData->status) && $vReturnData->status != 200) {
+                return ["status" => 400, "message" => isset($vReturnData->title) ? $vReturnData->title : "API call error, Check your payload."];
+            } else {
+                if (is_array($vReturnData))
+                    return $vReturnData[0];
+                else
+                    return $vReturnData;
+            }
         }
     }
+    // if ($err) {
+    //     return ["status" => 400, "message" => "cURL Error #:" . $err];
+    // } else {
+    //     if (isset($vReturnData->status) && $vReturnData->status != 200) {
+    //         return ["status" => 400, "message" => isset($vReturnData->title) ? $vReturnData->title : "API call error, Check your payload."];
+    //     } else {
+    //         if (is_array($vReturnData))
+    //             return $vReturnData[0];
+    //         else
+    //             return $vReturnData;
+    //     }
+    // }
 }
 
 
@@ -263,7 +278,7 @@ function create_category($vPayload)
     $vParam["body"] = $vPayloadBody;
 
     $vReturn = call_big_commerce_api($vParam);
-    // print_r($vReturn);
+    
     if (isset($vReturn->errors)) {
         return ["status" => 400, "message" => $vReturn->errors->title];
     } elseif (isset($vReturn->data)) {

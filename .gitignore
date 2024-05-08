@@ -11,3 +11,4 @@ script/*
 /.php_cs
 /*.cache
 config.php
+auth.json
