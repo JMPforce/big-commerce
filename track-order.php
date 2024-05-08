@@ -46,13 +46,13 @@ if (count($vResponse) > 0) {
     $vParam2["method"] = "GET";
     
     $vReturnData = call_aftership_tracking_api($vParam2);
-    // print_r($vReturnData);
+    // print_r($vReturnData->data);
     if (!isset($vReturnData->data)) {
         echo json_encode($vReturnData);
     } else {
         if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-            echo json_encode($vReturnData);
+            echo json_encode($vReturnData->data);
         else
-            v::$r = vR(200, $vReturnData);
+            v::$r = vR(200, $vReturnData->data);
     }
 }
