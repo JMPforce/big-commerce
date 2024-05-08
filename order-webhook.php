@@ -74,7 +74,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
             $vParam["api_url"] =  "labels";
             $vParam["method"] = "POST";
 
-            $vParam["body"]["order_id"] = $vOrderId;
+            $vParam["body"]["order_id"] = strval($vOrderId);
             $vParam["body"]["order_number"] = $vOrderId . "-" . ($index + 1);
             $vParam["body"]["return_shipment"] = false;
             $vParam["body"]["is_document"] = false;
