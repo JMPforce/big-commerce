@@ -91,10 +91,9 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
             $vParam["body"]["shipment"]["ship_from"]["city"] = $cart->ship_from->city;
             $vParam["body"]["shipment"]["ship_from"]["state"] = $cart->ship_from->state;
             $vParam["body"]["shipment"]["ship_from"]["postal_code"] = $cart->ship_from->zip;
-            $vParam["body"]["shipment"]["ship_from"]["country"] = "USA";
-            if (!empty($vCustomerResponseData->data[0]->phone))
-                $vParam["body"]["shipment"]["ship_from"]["phone"] = $vCustomerResponseData->data[0]->phone;
+            $vParam["body"]["shipment"]["ship_from"]["phone"] = $cart->ship_from->phone;
             $vParam["body"]["shipment"]["ship_from"]["email"] = $vCustomerResponseData->data[0]->email;
+            $vParam["body"]["shipment"]["ship_from"]["country"] = "USA";
 
             $vParam["body"]["shipment"]["ship_to"]["contact_name"] = $vCustomerResponseData->data[0]->first_name;
             $vParam["body"]["shipment"]["ship_to"]["company_name"] = !empty($vCustomerResponseData->data[0]->company) ? $vCustomerResponseData->data[0]->company : "Forecaddie";
@@ -102,15 +101,15 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
             $vParam["body"]["shipment"]["ship_to"]["city"] = $cart->ship_to->city;
             $vParam["body"]["shipment"]["ship_to"]["state"] = $cart->ship_to->state;
             $vParam["body"]["shipment"]["ship_to"]["postal_code"] = $cart->ship_to->zip;
-            $vParam["body"]["shipment"]["ship_to"]["country"] = "USA";
-            if (!empty($vCustomerResponseData->data[0]->phone))
-                $vParam["body"]["shipment"]["ship_to"]["phone"] = $vCustomerResponseData->data[0]->phone;
+            $vParam["body"]["shipment"]["ship_to"]["phone"] = $cart->ship_to->phone;
             $vParam["body"]["shipment"]["ship_to"]["email"] = $vCustomerResponseData->data[0]->email;
+            $vParam["body"]["shipment"]["ship_to"]["country"] = "USA";
+
 
             $vParam["body"]["shipment"]["parcels"] = [$vParcels];
             // print_r($vParam);
             $vReturnData = call_aftership_api($vParam);
-            // print_r($vReturnData);
+            print_r($vReturnData);
             // exit;
         }
     }
