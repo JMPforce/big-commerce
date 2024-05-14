@@ -48,22 +48,52 @@ if (count($vResponse) > 0) {
         v::$r = vR(400, $vResponse);
     }
 } else {
+    //Query customer using email address
+    $vParam["api_url"] =  "customers?include=addresses&email:in=" . $vPayload["billing_address"]["email"];
+    $vParam["method"] = "GET";
+    $vResponseCustomerData = call_big_commerce_api($vParam);
+    // print_r($vResponseCustomerData->data);
+    if (isset($vResponseCustomerData) && count($vResponseCustomerData->data) > 0) {
+        $vParam["body"]["customer_id"] = $vResponseCustomerData->data[0]->id;
+        $vPayload["billing_address"]["first_name"] = $vResponseCustomerData->data[0]->first_name;
+        $vPayload["billing_address"]["last_name"] = $vResponseCustomerData->data[0]->last_name;
+        if (!empty($vResponseCustomerData->data[0]->company))
+            $vPayload["billing_address"]["company"] = $vResponseCustomerData->data[0]->company;
+        if (!empty($vResponseCustomerData->data[0]->phone))
+            $vPayload["billing_address"]["phone"] = $vResponseCustomerData->data[0]->phone;
+        if (!empty($vResponseCustomerData->data[0]->address_count) && $vResponseCustomerData->data[0]->address_count > 0) {
+            $customerBillingAddress = $vResponseCustomerData->data[0]->addresses[$vResponseCustomerData->data[0]->address_count - 1];
+            $vPayload["billing_address"]["first_name"] = $customerBillingAddress->first_name;
+            $vPayload["billing_address"]["last_name"] = $customerBillingAddress->last_name;
+            $vPayload["billing_address"]["address1"] = $customerBillingAddress->address1;
+            $vPayload["billing_address"]["city"] = $customerBillingAddress->city;
+            $vPayload["billing_address"]["state"] = $customerBillingAddress->state_or_province;
+            // $vPayload["billing_address"]["state_or_province_code"] = $customerBillingAddress->state;
+            $vPayload["billing_address"]["company"] = $customerBillingAddress->company;
+            $vPayload["billing_address"]["phone"] = $customerBillingAddress->phone;
+            $vPayload["billing_address"]["postal_code"] = $customerBillingAddress->postal_code;
+            $vPayload["billing_address"]["country_code"] = $customerBillingAddress->country_code;
+        }
+    } else {
+        $vParam["body"]["customer_id"] = 0;
+    }
+    //create cart
     $vParam["api_url"] =  "carts";
     $vParam["method"] = "POST";
-    $vParam["body"]["customer_id"] = 0;
+
     $vParam["body"]["channel_id"] = 1;
     $vParam["body"]["currency"]["code"] = "USD";
     $vParam["body"]["locale"] = "en-US";
+    // print_r($vParam);
+    $vResponseCartData = call_big_commerce_api($vParam);
+    // print_r($vResponseCartData);exit;
 
-    $vReturnData = call_big_commerce_api($vParam);
-    // print_r($vReturnData);
-
-    if (!isset($vReturnData->data)) {
-        echo json_encode($vReturnData);
+    if (!isset($vResponseCartData->data)) {
+        echo json_encode($vResponseCartData);
     } else {
         unset($vParam["body"]);
-        // echo json_encode($vReturnData);exit;
-        $cartId = $vReturnData->data->id;
+        // echo json_encode($vResponseCartData);exit;
+        $cartId = $vResponseCartData->data->id;
         //stor cart meta 
         $connection = db_connection();
         $data["cart_id"] = $cartId;
@@ -86,7 +116,7 @@ if (count($vResponse) > 0) {
             $vParam["body"] = $vPayload["billing_address"];
             // print_r($vParam);
             $vResponseDataBilling = call_big_commerce_api($vParam);
-            //    print_r($vResponseDataBilling);exit;
+            //    print_r($vResponseDataBilling);
             //add shipping address
             if (isset($vResponseDataBilling->data)) {
                 // unset($vParam["body"]);
