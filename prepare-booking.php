@@ -110,6 +110,12 @@ if (count($vResponse) > 0) {
         if (!isset($vResponseDataCart->data)) {
             echo json_encode($vResponseDataCart);
         } else {
+            // if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
+            //     echo json_encode($vResponseDataCart->data);
+            // else
+            //     v::$r = vR(200, $vResponseDataCart->data);
+
+            // exit;
             //add billing address
             unset($vParam["body"]);
             $vParam["api_url"] = "checkouts/" . $cartId . "/billing-address";

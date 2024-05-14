@@ -18,7 +18,10 @@ $vParam["method"] = "GET";
 // }
 
 $vParam["api_url"] .= "?include=addresses";
-if ($vPayload["email_address"]) {
+if (!empty($vPayload["customer_id"]) && $vPayload["customer_id"]) {
+    $vParam["api_url"] .= "&id:in=" . $vPayload["customer_id"];
+}
+if (!empty($vPayload["email_address"]) && $vPayload["email_address"]) {
     $vParam["api_url"] .= "&email:in=" . $vPayload["email_address"];
 }
 // print_r($vParam);
@@ -28,7 +31,7 @@ if (!isset($vReturnData->data)) {
     echo json_encode($vReturnData);
 } else {
     if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-        echo json_encode($vReturnData);
+        echo json_encode($vReturnData->data);
     else
-        v::$r = vR(200, $vReturnData);
+        v::$r = vR(200, $vReturnData->data);
 }
