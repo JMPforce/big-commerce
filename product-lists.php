@@ -13,7 +13,7 @@ if (isset($vQuery["limit"])) {
 }else{
     $vParam["api_url"] .= "?limit=10";
 }
-$vParam["api_url"] .= "&include=images";
+$vParam["api_url"] .= "&include=images,custom_fields";
 if (isset($vQuery["sort"])) {
     $vParam["api_url"] .= "&sort=" . $vQuery["sort"];
 }else{
