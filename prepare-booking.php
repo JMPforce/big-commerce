@@ -110,21 +110,21 @@ if (count($vResponse) > 0) {
         if (!isset($vResponseDataCart->data)) {
             echo json_encode($vResponseDataCart);
         } else {
-            // if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-            //     echo json_encode($vResponseDataCart->data);
-            // else
-            //     v::$r = vR(200, $vResponseDataCart->data);
+            if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
+                echo json_encode($vResponseDataCart->data);
+            else
+                v::$r = vR(200, $vResponseDataCart->data);
 
-            // exit;
+            exit;
             //add billing address
             unset($vParam["body"]);
             $vParam["api_url"] = "checkouts/" . $cartId . "/billing-address";
             $vParam["body"] = $vPayload["billing_address"];
             // print_r($vParam);
-            $vResponseDataBilling = call_big_commerce_api($vParam);
+            // $vResponseDataBilling = call_big_commerce_api($vParam);
             //    print_r($vResponseDataBilling);
             //add shipping address
-            if (isset($vResponseDataBilling->data)) {
+            // if (isset($vResponseDataBilling->data)) {
                 // unset($vParam["body"]);
                 // $vParam["api_url"] = "checkouts/" . $cartId . "/consignments";
                 // foreach ($vPayload["shipping_address"] as $key => $shippingAddress) {
@@ -154,13 +154,13 @@ if (count($vResponse) > 0) {
                 // } else {
                 //     echo json_encode($vResponseConsignments);
                 // }
-                if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-                    echo json_encode($vResponseDataCart->data);
-                else
-                    v::$r = vR(200, $vResponseDataCart->data);
-            } else {
-                echo json_encode($vResponseDataBilling);
-            }
+            //     if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
+            //         echo json_encode($vResponseDataCart->data);
+            //     else
+            //         v::$r = vR(200, $vResponseDataCart->data);
+            // } else {
+            //     echo json_encode($vResponseDataBilling);
+            // }
         }
     }
 }
