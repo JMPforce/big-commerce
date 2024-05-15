@@ -117,11 +117,11 @@ if (count($vResponse) > 0) {
                 v::$r = vR(200, $vResponseDataCart->data);
             }
 
-            exit;
+            // exit;
             //add billing address
-            unset($vParam["body"]);
-            $vParam["api_url"] = "checkouts/" . $cartId . "/billing-address";
-            $vParam["body"] = $vPayload["billing_address"];
+            // unset($vParam["body"]);
+            // $vParam["api_url"] = "checkouts/" . $cartId . "/billing-address";
+            // $vParam["body"] = $vPayload["billing_address"];
             // print_r($vParam);
             // $vResponseDataBilling = call_big_commerce_api($vParam);
             //    print_r($vResponseDataBilling);
