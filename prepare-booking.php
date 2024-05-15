@@ -106,7 +106,7 @@ if (count($vResponse) > 0) {
         $vParam["api_url"] =  "carts/" . $cartId . "/redirect_urls";
         $vParam["method"] = "POST";
         $vResponseDataCart = call_big_commerce_api($vParam);
-        print_r($vResponseDataCart->data);
+        // print_r($vResponseDataCart->data);
         if (!isset($vResponseDataCart->data)) {
             echo json_encode($vResponseDataCart);
         } else {
@@ -114,7 +114,7 @@ if (count($vResponse) > 0) {
                 echo json_encode($vResponseDataCart->data);
             else{
                 echo json_encode($vResponseDataCart->data);
-                v::$r = vR(200, $vResponseDataCart->data);
+                // v::$r = vR(200, $vResponseDataCart->data);
             }
 
             exit;
