@@ -112,8 +112,10 @@ if (count($vResponse) > 0) {
         } else {
             if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
                 echo json_encode($vResponseDataCart->data);
-            else
+            else{
                 v::$r = vR(200, $vResponseDataCart->data);
+                echo json_encode($vResponseDataCart->data);
+            }
 
             exit;
             //add billing address
