@@ -86,7 +86,7 @@ if (count($vResponse) > 0) {
     $vParam["body"]["locale"] = "en-US";
     // print_r($vParam);
     $vResponseCartData = call_big_commerce_api($vParam);
-    // print_r($vResponseCartData);exit;
+    print_r($vResponseCartData);
 
     if (!isset($vResponseCartData->data)) {
         echo json_encode($vResponseCartData);
@@ -106,7 +106,7 @@ if (count($vResponse) > 0) {
         $vParam["api_url"] =  "carts/" . $cartId . "/redirect_urls";
         $vParam["method"] = "POST";
         $vResponseDataCart = call_big_commerce_api($vParam);
-        // print_r($vResponseDataCart);
+        print_r($vResponseDataCart);
         if (!isset($vResponseDataCart->data)) {
             echo json_encode($vResponseDataCart);
         } else {
