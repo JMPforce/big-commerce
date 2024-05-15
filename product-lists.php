@@ -11,7 +11,7 @@ $vParam["api_url"] =  "catalog/products";
 if (isset($vQuery["limit"])) {
     $vParam["api_url"] .= "?limit=" . $vQuery["limit"];
 }else{
-    $vParam["api_url"] .= "?limit=10";
+    $vParam["api_url"] .= "?limit=20";
 }
 $vParam["api_url"] .= "&include=images,custom_fields";
 if (isset($vQuery["sort"])) {
@@ -47,7 +47,7 @@ if (!isset($vReturnData->data)) {
     echo json_encode($vReturnData);
 } else {
     if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-        echo json_encode($vReturnData);
+        echo json_encode($vReturnData->data);
     else
-        v::$r = vR(200, $vReturnData);
+        v::$r = vR(200, $vReturnData->data);
 }
