@@ -50,7 +50,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
             $vParcels["dimension"]["width"] = 10;
             $vParcels["dimension"]["height"] = 10;
             $vParcels["dimension"]["depth"] = 10;
-            $vParcels["dimension"]["unit"] = 'cm';
+            $vParcels["dimension"]["unit"] = 'in';
             $vTotalWeight = 0;
             foreach ($vOrderResponseData->consignments as $data) {
                 foreach ($data->downloads[0]->line_items as $key => $row) {
@@ -59,7 +59,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                     $vItems[$key]["item_id"] = strval($row->product_id);
                     $vItems[$key]["price"]["currency"] = "USD";
                     $vItems[$key]["price"]["amount"] = intval($row->base_price);
-                    $vItems[$key]["origin_country"] = "USA";
+                    $vItems[$key]["origin_country"] = $cart->ship_from->country;
                     $vItems[$key]["weight"]["unit"] = "lb";
                     $vItems[$key]["weight"]["value"] = intval($row->weight);
                     $vTotalWeight += intval($row->weight);
@@ -93,7 +93,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
             $vParam["body"]["shipment"]["ship_from"]["postal_code"] = $cart->ship_from->postal_code;
             $vParam["body"]["shipment"]["ship_from"]["phone"] = $cart->ship_from->phone;
             $vParam["body"]["shipment"]["ship_from"]["email"] = $vCustomerResponseData->data[0]->email;
-            $vParam["body"]["shipment"]["ship_from"]["country"] = "USA";
+            $vParam["body"]["shipment"]["ship_from"]["country"] = $cart->ship_from->country;
 
             $vParam["body"]["shipment"]["ship_to"]["contact_name"] = $vCustomerResponseData->data[0]->first_name;
             $vParam["body"]["shipment"]["ship_to"]["company_name"] = !empty($vCustomerResponseData->data[0]->company) ? $vCustomerResponseData->data[0]->company : "Forecaddie";
@@ -103,7 +103,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
             $vParam["body"]["shipment"]["ship_to"]["postal_code"] = $cart->ship_to->postal_code;
             $vParam["body"]["shipment"]["ship_to"]["phone"] = $cart->ship_to->phone;
             $vParam["body"]["shipment"]["ship_to"]["email"] = $vCustomerResponseData->data[0]->email;
-            $vParam["body"]["shipment"]["ship_to"]["country"] = "USA";
+            $vParam["body"]["shipment"]["ship_to"]["country"] = $cart->ship_to->country;
 
 
             $vParam["body"]["shipment"]["parcels"] = [$vParcels];

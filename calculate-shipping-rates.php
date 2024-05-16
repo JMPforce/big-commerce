@@ -57,6 +57,7 @@ if (empty($vPayload["ship_to"])) {
         $vParam["body"]["shipment"]["ship_to"] = $vPayload["ship_to"];
     }
 }
+
 if (empty($vPayload["parcels"])) {
     $vResponse["status"] = 400;
     $vResponse["error"] = "parcels parameter missing.";
