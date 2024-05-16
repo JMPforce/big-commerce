@@ -121,7 +121,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
             $vParam["body"]["shipment"]["parcels"] = [$vParcels];
             // print_r($vParam);
             $vReturnData = call_aftership_api($vParam);
-            print_r($vReturnData);
+            // print_r($vReturnData);
             // exit;
         }
     }
