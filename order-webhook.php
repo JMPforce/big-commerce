@@ -52,8 +52,8 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
             $vParcels["dimension"]["depth"] = 10;
             $vParcels["dimension"]["unit"] = 'in';
             $vTotalWeight = 0;
-            $getCOuntryCode = get_country_code($cart->ship_from->country);
-            print_r($getCOuntryCode[0]->cca3);
+            $getCountryCode = get_country_code($cart->ship_from->country);
+            print_r($getCountryCode);
             exit;
             foreach ($vOrderResponseData->consignments as $data) {
                 foreach ($data->downloads[0]->line_items as $key => $row) {

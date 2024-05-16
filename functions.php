@@ -170,7 +170,7 @@ function call_aftership_tracking_api($vParam)
 
 function get_country_code($name)
 {
-
+    echo $name;
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
