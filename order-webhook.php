@@ -18,7 +18,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
     $vParam["method"] = "GET";
     //order details
     $vOrderResponseData = call_big_commerce_api($vParam, "v2");
-    print_r($vOrderResponseData);exit;
+    // print_r($vOrderResponseData);exit;
     $vCustomerId = $vOrderResponseData->customer_id;
     if ($vOrderResponseData->id) {
         $vConnection = db_connection();
@@ -52,6 +52,9 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
             $vParcels["dimension"]["depth"] = 10;
             $vParcels["dimension"]["unit"] = 'in';
             $vTotalWeight = 0;
+            $getCOuntryCode = get_country_code($cart->ship_from->country);
+            print_r($getCOuntryCode[0]->cca3);
+            exit;
             foreach ($vOrderResponseData->consignments as $data) {
                 foreach ($data->downloads[0]->line_items as $key => $row) {
                     $vItems[$key]["description"] = $row->name;

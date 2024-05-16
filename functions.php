@@ -153,7 +153,7 @@ function call_aftership_tracking_api($vParam)
 
     $vResponse = curl_exec($curl);
     $vReturnData = json_decode($vResponse);
-    
+
     $err = curl_error($curl);
 
     curl_close($curl);
@@ -166,6 +166,29 @@ function call_aftership_tracking_api($vParam)
         } else
             return $vReturnData;
     }
+}
+
+function get_country_code($name)
+{
+
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://restcountries.com/v3.1/name/' . $name,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+    ));
+
+    $vResponse = curl_exec($curl);
+
+    curl_close($curl);
+    $vReturnData = json_decode($vResponse);
+    return $vReturnData;
 }
 
 function call_aftership_api($vParam)
@@ -233,7 +256,7 @@ function call_big_commerce_api($vParam, $api_version = "")
     $vResponse = curl_exec($curl);
     $vReturnData = json_decode($vResponse);
     $err = curl_error($curl);
-    
+
 
     curl_close($curl);
     if ($api_version == "v2") {
@@ -278,7 +301,7 @@ function create_category($vPayload)
     $vParam["body"] = $vPayloadBody;
 
     $vReturn = call_big_commerce_api($vParam);
-    
+
     if (isset($vReturn->errors)) {
         return ["status" => 400, "message" => $vReturn->errors->title];
     } elseif (isset($vReturn->data)) {
