@@ -52,9 +52,18 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
             $vParcels["dimension"]["depth"] = 10;
             $vParcels["dimension"]["unit"] = 'in';
             $vTotalWeight = 0;
-            $getCountryCode = get_country_code($cart->ship_from->country);
-            print_r($getCountryCode);
-            exit;
+            switch (strtolower($cart->ship_from->country)) {
+                case 'ireland':
+                    $originCountry = 'IRL';
+                    break;
+                case 'uk':
+                case 'united kingdom':
+                    $originCountry = 'GBR';
+                    break;
+                default:
+                    $originCountry = 'USA';
+            }
+
             foreach ($vOrderResponseData->consignments as $data) {
                 foreach ($data->downloads[0]->line_items as $key => $row) {
                     $vItems[$key]["description"] = $row->name;
@@ -62,7 +71,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                     $vItems[$key]["item_id"] = strval($row->product_id);
                     $vItems[$key]["price"]["currency"] = "USD";
                     $vItems[$key]["price"]["amount"] = intval($row->base_price);
-                    $vItems[$key]["origin_country"] = $cart->ship_from->country;
+                    // $vItems[$key]["origin_country"] = $originCountry;
                     $vItems[$key]["weight"]["unit"] = "lb";
                     $vItems[$key]["weight"]["value"] = intval($row->weight);
                     $vTotalWeight += intval($row->weight);
