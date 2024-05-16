@@ -18,7 +18,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
     $vParam["method"] = "GET";
     //order details
     $vOrderResponseData = call_big_commerce_api($vParam, "v2");
-    print_r($vOrderResponseData);exit;
+    // print_r($vOrderResponseData);exit;
     $vCustomerId = $vOrderResponseData->customer_id;
     if ($vOrderResponseData->id) {
         $vConnection = db_connection();
