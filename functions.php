@@ -188,7 +188,16 @@ function get_country_code($name)
 
     curl_close($curl);
     $vReturnData = json_decode($vResponse);
-    return $vReturnData;
+    $err = curl_error($curl);
+
+    curl_close($curl);
+
+    if ($err) {
+        return ["status" => 400, "message" => "cURL Error #:" . $err];
+    } else {
+
+        return $vReturnData;
+    }
 }
 
 function call_aftership_api($vParam)
