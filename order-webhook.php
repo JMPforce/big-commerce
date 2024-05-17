@@ -18,7 +18,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
     $vParam["method"] = "GET";
     //order details
     $vOrderResponseData = call_big_commerce_api($vParam, "v2");
-    // print_r($vOrderResponseData);exit;
+    
     $vCustomerId = $vOrderResponseData->customer_id;
     if ($vOrderResponseData->id) {
         $vConnection = db_connection();
@@ -28,17 +28,16 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
         $vResult = select($vConnection, $vSql);
         $vCartMeta = json_decode($vResult[0]["meta"]);
         $vShipperInfo = json_decode($vResult[0]["shipper_info"]);
-        print_r($vShipperInfo);
+        
         closeConnection($vConnection);
 
         //customer details
         $vParam["api_url"] =  "customers?id:in=" . $vCustomerId;
         $vParam["method"] = "GET";
         $vCustomerResponseData = call_big_commerce_api($vParam);
-        // print_r($vCartMeta);exit;
+       
         foreach ($vCartMeta as $index => $cart) {
 
-            // print_r($vOrderResponseData->consignments);exit;
             foreach ($vOrderResponseData->consignments as $data) {
 
                 foreach ($data->downloads[0]->line_items as $key => $row) {
@@ -130,7 +129,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                         $vParam["body"]["shipment"]["ship_to"]["country"] = $cart->ship_to->country;
 
                         $vParam["body"]["shipment"]["parcels"] = [$vParcels];
-                        // print_r($vParam);
+                        
                         // echo json_encode($vParam);
                         $vReturnData = call_aftership_api($vParam);
                         echo json_encode($vReturnData);
