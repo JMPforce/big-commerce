@@ -90,13 +90,13 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
             $vParam["body"]["order_number"] = $vOrderId . "-" . ($index + 1);
             $vParam["body"]["return_shipment"] = false;
             $vParam["body"]["is_document"] = false;
-            $vParam["body"]["service_type"] = "usps-discounted_express_mail";
             $vParam["body"]["ship_date"] = date("Y-m-d", strtotime($cart->ship_from->date));
-
+            
             $vParam["body"]["custom_fields"]["pick_up_date"] = $cart->ship_from->date;
             $vParam["body"]["custom_fields"]["drop_off_date"] = $cart->ship_to->date;
-
+            
             $vParam["body"]["shipper_account"]["id"] = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID"];
+            $vParam["body"]["service_type"] = $GLOBALS["vConfig"]["AS_SHIPPER_SERVICE_TYPE"];
             $vParam["body"]["shipment"]["ship_from"]["contact_name"] = $vCustomerResponseData->data[0]->first_name;
             $vParam["body"]["shipment"]["ship_from"]["company_name"] = !empty($vCustomerResponseData->data[0]->company) ? $vCustomerResponseData->data[0]->company : "Forecaddie";
             $vParam["body"]["shipment"]["ship_from"]["street1"] = $cart->ship_from->address;
