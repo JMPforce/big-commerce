@@ -14,8 +14,12 @@ if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
 } else
     $vPayload = v::$a;
 
-// print_r($vPayload);
-$vParam["body"]["shipper_accounts"][]["id"] = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID"];
+if($vPayload["shipper_account_id"]){
+    $vParam["body"]["shipper_accounts"][]["id"]=$vPayload["shipper_account_id"];
+}else{
+    // $vParam["body"]["shipper_accounts"][]["id"] = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID"];
+}
+
 
 if (empty($vPayload["ship_from"])) {
     $vResponse["status"] = 400;
@@ -146,7 +150,7 @@ if (empty($vPayload["parcels"])) {
         $vParam["body"]["ship_date"] = $vPayload["ship_date"];
     }
 }
-// print_r($vParam["body"]);exit;
+// print_r($vParam["body"]);
 if (count($vResponse) > 0) {
     if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
         echo json_encode($vResponse);
@@ -161,7 +165,7 @@ if (count($vResponse) > 0) {
         echo json_encode($vReturnData);
     } else {
         if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-            echo json_encode($vReturnData->data);
+            echo json_encode($vReturnData);
         else
             v::$r = vR(200, $vReturnData->data);
     }
