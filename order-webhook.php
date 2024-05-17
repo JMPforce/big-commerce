@@ -28,6 +28,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
         $vResult = select($vConnection, $vSql);
         $vCartMeta = json_decode($vResult[0]["meta"]);
         $vShipperInfo = json_decode($vResult[0]["shipper_info"]);
+        print_r($vShipperInfo);
         closeConnection($vConnection);
 
         //customer details
@@ -57,7 +58,11 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                     $vParam["method"] = "GET";
                     $vItems = [];
                     $vReturnProductData = call_big_commerce_api($vParam);
-                    // print_r($vReturnProductData->data->custom_fields);
+                    //find item shipper info
+                    $shipperIndex = findIndexByProductId($vShipperInfo, $row->product_id);
+                    $vShipperId = $vShipperInfo[$shipperIndex]->shipper_method->shipper_id;
+                    $vServiceType = $vShipperInfo[$shipperIndex]->shipper_method->service_type;
+                    //find item dimensions
                     $widthIndex = findIndexByName($vReturnProductData->data->custom_fields, "width");
                     $width = $vReturnProductData->data->custom_fields[$widthIndex]->value;
                     $heightIndex = findIndexByName($vReturnProductData->data->custom_fields, "height");
@@ -90,7 +95,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
 
                         $vParam["api_url"] =  "labels";
                         $vParam["method"] = "POST";
-                        $reference="reference-" . $vOrderId . "-" . ($key + 1) . "-" . $row->product_id."_".$i;
+                        $reference = "reference-" . $vOrderId . "-" . ($key + 1) . "-" . $row->product_id . "_" . $i;
                         $vParam["body"]["order_id"] = $reference;
                         $vParam["body"]["order_number"] = $reference;
                         $vParam["body"]["return_shipment"] = false;
@@ -102,8 +107,8 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
 
                         // $vParam["body"]["shipper_account"]["id"] = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID"];
                         // $vParam["body"]["service_type"] = $GLOBALS["vConfig"]["AS_SHIPPER_SERVICE_TYPE"];
-                        $vParam["body"]["shipper_account"]["id"] = $vShipperInfo->shipperId;
-                        $vParam["body"]["service_type"] = $vShipperInfo->serviceType;
+                        $vParam["body"]["shipper_account"]["id"] = $vShipperId;
+                        $vParam["body"]["service_type"] = $vServiceType;
                         $vParam["body"]["shipment"]["ship_from"]["contact_name"] = $vCustomerResponseData->data[0]->first_name;
                         $vParam["body"]["shipment"]["ship_from"]["company_name"] = !empty($vCustomerResponseData->data[0]->company) ? $vCustomerResponseData->data[0]->company : "Forecaddie";
                         $vParam["body"]["shipment"]["ship_from"]["street1"] = $cart->ship_from->address;
