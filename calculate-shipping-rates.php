@@ -14,10 +14,10 @@ if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
 } else
     $vPayload = v::$a;
 
-if($vPayload["shipper_account_id"]){
+if(!empty($vPayload["shipper_account_id"])){
     $vParam["body"]["shipper_accounts"][]["id"]=$vPayload["shipper_account_id"];
 }else{
-    // $vParam["body"]["shipper_accounts"][]["id"] = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID"];
+    $vParam["body"]["shipper_accounts"][]["id"] = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID"];
 }
 
 
