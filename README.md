@@ -675,14 +675,14 @@ Sample payload
         },
         "items": [
             {
-                "description": "Food Bar",
+                "description": "Golf bags & luggage",
                 "quantity": 1,
                 "price": {
                     "currency": "USD",
                     "amount": 100
                 },
                 "item_id": "1234567",
-                "origin_country": "CHN",
+                "origin_country": "US",
                 "weight": {
                     "unit": "kg",
                     "value": 10
@@ -691,7 +691,7 @@ Sample payload
                 "hs_code": "1006.30"
             }
         ],
-        "description": "Food XS",
+        "description": "Golf bags & luggage",
         "weight": {
             "unit": "kg",
             "value": 10
