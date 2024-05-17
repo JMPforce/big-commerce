@@ -98,8 +98,9 @@ if (count($vResponse) > 0) {
         $connection = db_connection();
         $data["cart_id"] = $cartId;
         $data["meta"] = json_encode($vPayload["cart_meta"]);
+        $data["shipper_info"] = json_encode($vPayload["shipper_info"]);
 
-        $sql = "INSERT INTO {$vTable} (cart_id,meta,created) values ('" . $data["cart_id"] . "','" . $data["meta"] . "',now()) RETURNING cart_id";
+        $sql = "INSERT INTO {$vTable} (cart_id,meta,shipper_info,created) values ('" . $data["cart_id"] . "','" . $data["meta"] . "','" . $data["shipper_info"] . "',now()) RETURNING cart_id";
         $result = insert($connection, $sql);
         closeConnection($connection);
         //cart redirectu url
@@ -107,14 +108,14 @@ if (count($vResponse) > 0) {
         $vParam["method"] = "POST";
         $vResponseDataCart = call_big_commerce_api($vParam);
         //push cart_id with the response
-        $vResponseDataCart->data->cart_id=$cartId;
+        $vResponseDataCart->data->cart_id = $cartId;
         // print_r($vResponseDataCart->data);exit;
         if (!isset($vResponseDataCart->data)) {
             echo json_encode($vResponseDataCart);
         } else {
             if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
                 echo json_encode($vResponseDataCart->data);
-            else{
+            else {
                 // echo json_encode($vResponseDataCart->data);
                 v::$r = vR(200, $vResponseDataCart->data);
             }
@@ -129,35 +130,35 @@ if (count($vResponse) > 0) {
             //    print_r($vResponseDataBilling);
             //add shipping address
             // if (isset($vResponseDataBilling->data)) {
-                // unset($vParam["body"]);
-                // $vParam["api_url"] = "checkouts/" . $cartId . "/consignments";
-                // foreach ($vPayload["shipping_address"] as $key => $shippingAddress) {
-                //     $consignments[$key]["address"] = $shippingAddress;
-                //     if ($vReturnData->data->line_items->physical_items) {
-                //         foreach ($vReturnData->data->line_items->physical_items as $key2 => $item) {
-                //             $consignments[$key]["line_items"][$key2]["item_id"] = $item->id;
-                //             $consignments[$key]["line_items"][$key2]["quantity"] = $item->quantity;
-                //         }
-                //     }
-                //     if ($vReturnData->data->line_items->digital_items) {
-                //         foreach ($vReturnData->data->line_items->digital_items as $key3 => $item) {
-                //             $consignments[$key]["line_items"][$key3]["item_id"] = $item->id;
-                //             $consignments[$key]["line_items"][$key3]["quantity"] = $item->quantity;
-                //         }
-                //     }
-                // }
-                // $vParam["body"] = $consignments;
-                //    print_r($vParam);exit;
-                // $vResponseConsignments = call_big_commerce_api($vParam);
-                // print_r($vResponseConsignments);
-                // if (isset($vResponseConsignments->data)) {
-                //     if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-                //         echo json_encode($vResponseDataCart->data);
-                //     else
-                //         v::$r = vR(200, $vResponseDataCart->data);
-                // } else {
-                //     echo json_encode($vResponseConsignments);
-                // }
+            // unset($vParam["body"]);
+            // $vParam["api_url"] = "checkouts/" . $cartId . "/consignments";
+            // foreach ($vPayload["shipping_address"] as $key => $shippingAddress) {
+            //     $consignments[$key]["address"] = $shippingAddress;
+            //     if ($vReturnData->data->line_items->physical_items) {
+            //         foreach ($vReturnData->data->line_items->physical_items as $key2 => $item) {
+            //             $consignments[$key]["line_items"][$key2]["item_id"] = $item->id;
+            //             $consignments[$key]["line_items"][$key2]["quantity"] = $item->quantity;
+            //         }
+            //     }
+            //     if ($vReturnData->data->line_items->digital_items) {
+            //         foreach ($vReturnData->data->line_items->digital_items as $key3 => $item) {
+            //             $consignments[$key]["line_items"][$key3]["item_id"] = $item->id;
+            //             $consignments[$key]["line_items"][$key3]["quantity"] = $item->quantity;
+            //         }
+            //     }
+            // }
+            // $vParam["body"] = $consignments;
+            //    print_r($vParam);exit;
+            // $vResponseConsignments = call_big_commerce_api($vParam);
+            // print_r($vResponseConsignments);
+            // if (isset($vResponseConsignments->data)) {
+            //     if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
+            //         echo json_encode($vResponseDataCart->data);
+            //     else
+            //         v::$r = vR(200, $vResponseDataCart->data);
+            // } else {
+            //     echo json_encode($vResponseConsignments);
+            // }
             //     if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
             //         echo json_encode($vResponseDataCart->data);
             //     else
