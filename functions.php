@@ -359,7 +359,8 @@ function update_customer_address($vPayload)
     return call_big_commerce_api($vParam);
 }
 
-function findIndexByProductId($array, $id) {
+function findIndexByProductId($array, $id)
+{
     foreach ($array as $index => $object) {
         if ($object->product_id === $id) {
             return $index;
@@ -367,11 +368,33 @@ function findIndexByProductId($array, $id) {
     }
     return -1; // Return -1 if the name is not found
 }
-function findIndexByName($array, $name) {
+function findIndexByName($array, $name)
+{
     foreach ($array as $index => $object) {
         if ($object->name === $name) {
             return $index;
         }
     }
     return -1; // Return -1 if the name is not found
+}
+
+function getCountryCode($name)
+{
+    switch (strtolower($name)) {
+        case 'united kingdom':
+        case 'great britain':
+        case 'uk':
+        case 'gb':
+            $code = "GBR";
+            break;
+        case 'ireland':
+        case 'ie':
+            $code = "IRL";
+            break;
+
+        default:
+            $code = "USA";
+            break;
+    }
+    return $code;
 }

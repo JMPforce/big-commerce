@@ -18,7 +18,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
     $vParam["method"] = "GET";
     //order details
     $vOrderResponseData = call_big_commerce_api($vParam, "v2");
-    
+
     $vCustomerId = $vOrderResponseData->customer_id;
     if ($vOrderResponseData->id) {
         $vConnection = db_connection();
@@ -28,14 +28,14 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
         $vResult = select($vConnection, $vSql);
         $vCartMeta = json_decode($vResult[0]["meta"]);
         $vShipperInfo = json_decode($vResult[0]["shipper_info"]);
-        
+
         closeConnection($vConnection);
 
         //customer details
         $vParam["api_url"] =  "customers?id:in=" . $vCustomerId;
         $vParam["method"] = "GET";
         $vCustomerResponseData = call_big_commerce_api($vParam);
-       
+
         foreach ($vCartMeta as $index => $cart) {
 
             foreach ($vOrderResponseData->consignments as $data) {
@@ -80,9 +80,11 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                         $vItems["description"] = $row->name;
                         $vItems["quantity"] = 1;
                         $vItems["item_id"] = strval($row->product_id);
+                        $vItems["origin_country"] = getCountryCode($cart->ship_from->country);
+
                         $vItems["price"]["currency"] = "USD";
                         $vItems["price"]["amount"] = intval($row->base_price);
-                        // $vItems[$key]["origin_country"] = $originCountry;
+
                         $vItems["weight"]["unit"] = "lb";
                         $vItems["weight"]["value"] = intval($weight);
                         $vTotalWeight = intval($weight);
@@ -92,9 +94,10 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                         $vParcels["weight"]["unit"] = "lb";
                         $vParcels["weight"]["value"] = $vTotalWeight;
 
+
                         $vParam["api_url"] =  "labels";
                         $vParam["method"] = "POST";
-                        $reference = "reference-" . $vOrderId . "-" . $row->product_id . "_" . $i;
+                        $reference = "reference-" . $vOrderId . "-" . $row->product_id . "_" . ($i + 1);
                         $vParam["body"]["order_id"] = $reference;
                         $vParam["body"]["order_number"] = $reference;
                         $vParam["body"]["return_shipment"] = false;
@@ -108,20 +111,28 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                         // $vParam["body"]["service_type"] = $GLOBALS["vConfig"]["AS_SHIPPER_SERVICE_TYPE"];
                         $vParam["body"]["shipper_account"]["id"] = $vShipperId;
                         $vParam["body"]["service_type"] = $vServiceType;
-                        $vParam["body"]["shipment"]["ship_from"]["contact_name"] = $vCustomerResponseData->data[0]->first_name;
-                        $vParam["body"]["shipment"]["ship_from"]["company_name"] = !empty($vCustomerResponseData->data[0]->company) ? $vCustomerResponseData->data[0]->company : "Forecaddie";
+                        $vCustomerName = $vCustomerResponseData->data[0]->first_name;
+                        if ($vCustomerResponseData->data[0]->last_name)
+                            $vCustomerName .= " " . $vCustomerResponseData->data[0]->last_name;
+                        $vParam["body"]["shipment"]["ship_from"]["contact_name"] = $vCustomerName;
+                        if ($vCustomerResponseData->data[0]->company)
+                            $vParam["body"]["shipment"]["ship_from"]["company_name"] = $vCustomerResponseData->data[0]->company;
                         $vParam["body"]["shipment"]["ship_from"]["street1"] = $cart->ship_from->address;
-                        $vParam["body"]["shipment"]["ship_from"]["city"] = $cart->ship_from->city;
+                        if (!empty($cart->ship_from->city))
+                            $vParam["body"]["shipment"]["ship_from"]["city"] = $cart->ship_from->city;
                         $vParam["body"]["shipment"]["ship_from"]["state"] = $cart->ship_from->state;
                         $vParam["body"]["shipment"]["ship_from"]["postal_code"] = $cart->ship_from->postal_code;
                         $vParam["body"]["shipment"]["ship_from"]["phone"] = $cart->ship_from->phone;
                         $vParam["body"]["shipment"]["ship_from"]["email"] = $vCustomerResponseData->data[0]->email;
                         $vParam["body"]["shipment"]["ship_from"]["country"] = $cart->ship_from->country;
 
-                        $vParam["body"]["shipment"]["ship_to"]["contact_name"] = $vCustomerResponseData->data[0]->first_name;
-                        $vParam["body"]["shipment"]["ship_to"]["company_name"] = !empty($vCustomerResponseData->data[0]->company) ? $vCustomerResponseData->data[0]->company : "Forecaddie";
+                        $vParam["body"]["shipment"]["ship_to"]["contact_name"] = $vCustomerName;
+                        // $vParam["body"]["shipment"]["ship_to"]["company_name"] = !empty($vCustomerResponseData->data[0]->company) ? $vCustomerResponseData->data[0]->company : "Forecaddie";
+                        if ($vCustomerResponseData->data[0]->company)
+                            $vParam["body"]["shipment"]["ship_to"]["company_name"] = $vCustomerResponseData->data[0]->company;
                         $vParam["body"]["shipment"]["ship_to"]["street1"] = $cart->ship_to->address;
-                        $vParam["body"]["shipment"]["ship_to"]["city"] = $cart->ship_to->city;
+                        if (!empty($cart->ship_to->city))
+                            $vParam["body"]["shipment"]["ship_to"]["city"] = $cart->ship_to->city;
                         $vParam["body"]["shipment"]["ship_to"]["state"] = $cart->ship_to->state;
                         $vParam["body"]["shipment"]["ship_to"]["postal_code"] = $cart->ship_to->postal_code;
                         $vParam["body"]["shipment"]["ship_to"]["phone"] = $cart->ship_to->phone;
@@ -129,7 +140,10 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                         $vParam["body"]["shipment"]["ship_to"]["country"] = $cart->ship_to->country;
 
                         $vParam["body"]["shipment"]["parcels"] = [$vParcels];
-                        
+                        if ($cart->ship_from->country != $cart->ship_to->country) {
+                            $vParam["body"]["customs"]["purpose"] = "personal";
+                        }
+
                         // echo json_encode($vParam);
                         $vReturnData = call_aftership_api($vParam);
                         echo json_encode($vReturnData);
