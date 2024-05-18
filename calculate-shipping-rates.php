@@ -25,13 +25,13 @@ if (empty($vPayload["ship_from"])) {
     $vResponse["status"] = 400;
     $vResponse["error"] = "ship_from parameter missing.";
 } else {
-    if (empty($vPayload["ship_from"]["street1"])) {
+    if (empty($vPayload["ship_from"]["state"])) {
         $vResponse["status"] = 400;
-        $vResponse["error"] = "ship_from street1 parameter missing.";
+        $vResponse["error"] = "ship_from state parameter missing.";
     }
-    if (empty($vPayload["ship_from"]["contact_name"])) {
+    if (empty($vPayload["ship_from"]["postal_code"])) {
         $vResponse["status"] = 400;
-        $vResponse["error"] = "ship_from contact_name parameter missing.";
+        $vResponse["error"] = "ship_from postal_code parameter missing.";
     }
     if (empty($vPayload["ship_from"]["country"])) {
         $vResponse["status"] = 400;
@@ -45,13 +45,13 @@ if (empty($vPayload["ship_to"])) {
     $vResponse["status"] = 400;
     $vResponse["error"] = "ship_to parameter missing.";
 } else {
-    if (empty($vPayload["ship_to"]["street1"])) {
+    if (empty($vPayload["ship_to"]["state"])) {
         $vResponse["status"] = 400;
-        $vResponse["error"] = "ship_to street1 parameter missing.";
+        $vResponse["error"] = "ship_to state parameter missing.";
     }
-    if (empty($vPayload["ship_to"]["contact_name"])) {
+    if (empty($vPayload["ship_to"]["postal_code"])) {
         $vResponse["status"] = 400;
-        $vResponse["error"] = "ship_to contact_name parameter missing.";
+        $vResponse["error"] = "ship_to postal_code parameter missing.";
     }
     if (empty($vPayload["ship_to"]["country"])) {
         $vResponse["status"] = 400;
@@ -128,23 +128,7 @@ if (empty($vPayload["parcels"])) {
     if (count($vResponse) <= 0) {
         $vParam["body"]["shipment"]["parcels"][] = $vPayload["parcels"];
     }
-    // if (empty($vPayload["return_to"])) {
-    //     // $vResponse["status"] = 400;
-    //     // $vResponse["error"] = "return_to parameter missing.";
-    // } else {
-    //     if (empty($vPayload["return_to"]["contact_name"])) {
-    //         $vResponse["status"] = 400;
-    //         $vResponse["error"] = "return_to contact_name parameter missing.";
-    //     }
-    //     if (empty($vPayload["return_to"]["street1"])) {
-    //         $vResponse["status"] = 400;
-    //         $vResponse["error"] = "return_to street1 parameter missing.";
-    //     }
-    //     if (empty($vPayload["return_to"]["country"])) {
-    //         $vResponse["status"] = 400;
-    //         $vResponse["error"] = "return_to country parameter missing.";
-    //     }
-    // }
+    
 
     if (isset($vPayload["ship_date"])) {
         $vParam["body"]["ship_date"] = $vPayload["ship_date"];
