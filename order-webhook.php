@@ -144,7 +144,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                         $vParam["body"]["shipment"]["parcels"] = [$vParcels];
                         if ($cart->ship_from->country != $cart->ship_to->country) {
                             $vParam["body"]["customs"]["purpose"] = "personal";
-                            $vParam["body"]["customs"]["terms_of_trade"] = "dat";
+                            $vParam["body"]["customs"]["terms_of_trade"] = "dap";
                         }
 
                         // echo json_encode($vParam);

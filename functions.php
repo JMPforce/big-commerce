@@ -400,7 +400,7 @@ function getCountryCode($name)
 }
 function getUnitsByCountry($name)
 {
-   
+   print_r($GLOBALS["vConfig"]);
     switch (strtolower($name)) {
         case 'united kingdom':
         case 'great britain':
@@ -416,9 +416,9 @@ function getUnitsByCountry($name)
             break;
 
         default:
-            $units["weight"] = $GLOBALS["vConfig"]["US"]["WEIGHT_UNIT"];
-            $units["dimension"] = $GLOBALS["vConfig"]["US"]["DIMENSION_UNIT"];
-            $units["currency"] = $GLOBALS["vConfig"]["US"]["CURRENCY"];
+            $units["weight"] = $vConfig["US"]["WEIGHT_UNIT"];
+            $units["dimension"] = $vConfig["US"]["DIMENSION_UNIT"];
+            $units["currency"] = $vConfig["US"]["CURRENCY"];
             break;
     }
     return $units;
