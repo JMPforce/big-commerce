@@ -410,15 +410,15 @@ function getUnitsByCountry($name)
         case 'ireland':
         case 'ie':
         case 'irl':
-            $units["weight"] = $GLOBALS["vConfig"]["EU"]["weight_unit"];
-            $units["dimension"] = $GLOBALS["vConfig"]["EU"]["dimension_unit"];
-            $units["currency"] = $GLOBALS["vConfig"]["EU"]["currency"];
+            $units["weight"] = $GLOBALS["vConfig"]["EU"]["WEIGHT_UNIT"];
+            $units["dimension"] = $GLOBALS["vConfig"]["EU"]["DIMENSION_UNIT"];
+            $units["currency"] = $GLOBALS["vConfig"]["EU"]["CURRENCY"];
             break;
 
         default:
-            $units["weight"] = $GLOBALS["vConfig"]["US"]["weight_unit"];
-            $units["dimension"] = $GLOBALS["vConfig"]["US"]["dimension_unit"];
-            $units["currency"] = $GLOBALS["vConfig"]["US"]["currency"];
+            $units["weight"] = $GLOBALS["vConfig"]["US"]["WEIGHT_UNIT"];
+            $units["dimension"] = $GLOBALS["vConfig"]["US"]["DIMENSION_UNIT"];
+            $units["currency"] = $GLOBALS["vConfig"]["US"]["CURRENCY"];
             break;
     }
     return $units;
