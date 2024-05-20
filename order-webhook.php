@@ -71,7 +71,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                     $weightIndex = findIndexByName($vReturnProductData->data->custom_fields, "weight");
                     $weight = $vReturnProductData->data->custom_fields[$weightIndex]->value;
                     $vParcels["box_type"] = "custom";
-                    $vParcels["dimension"]["unit"] = 'in';
+                    
 
                     for ($i = 0; $i < $row->quantity; $i++) {
                         $vParcels["dimension"]["width"] = intval($width);
@@ -81,17 +81,19 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                         $vItems["quantity"] = 1;
                         $vItems["item_id"] = strval($row->product_id);
                         $vItems["origin_country"] = getCountryCode($cart->ship_from->country);
-
-                        $vItems["price"]["currency"] = "USD";
+                        $units = getUnitsByCountry($cart->ship_from->country);
+                        $vParcels["dimension"]["unit"] = $units["dimension"];
+                        // $vItems["price"]["currency"] = "USD";
+                        $vItems["price"]["currency"] = $units["currency"];
                         $vItems["price"]["amount"] = intval($row->base_price);
 
-                        $vItems["weight"]["unit"] = "lb";
+                        $vItems["weight"]["unit"] = $units["weight"];
                         $vItems["weight"]["value"] = intval($weight);
                         $vTotalWeight = intval($weight);
 
                         $vParcels["items"] = [$vItems];
                         $vParcels["description"] = "Golf bags & luggage";
-                        $vParcels["weight"]["unit"] = "lb";
+                        $vParcels["weight"]["unit"] = $units["weight"];
                         $vParcels["weight"]["value"] = $vTotalWeight;
 
 

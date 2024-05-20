@@ -14,9 +14,9 @@ if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
 } else
     $vPayload = v::$a;
 
-if(!empty($vPayload["shipper_account_id"])){
-    $vParam["body"]["shipper_accounts"][]["id"]=$vPayload["shipper_account_id"];
-}else{
+if (!empty($vPayload["shipper_account_id"])) {
+    $vParam["body"]["shipper_accounts"][]["id"] = $vPayload["shipper_account_id"];
+} else {
     $vParam["body"]["shipper_accounts"][]["id"] = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID"];
 }
 
@@ -36,6 +36,8 @@ if (empty($vPayload["ship_from"])) {
     if (empty($vPayload["ship_from"]["country"])) {
         $vResponse["status"] = 400;
         $vResponse["error"] = "ship_from country parameter missing.";
+    } else {
+        $units = getUnitsByCountry($vPayload["ship_from"]["country"]);
     }
     if (count($vResponse) <= 0) {
         $vParam["body"]["shipment"]["ship_from"] = $vPayload["ship_from"];
@@ -87,8 +89,8 @@ if (empty($vPayload["parcels"])) {
             $vResponse["error"] = "parcels dimension depth parameter missing.";
         }
         if (empty($vPayload["parcels"]["dimension"]["unit"])) {
-            $vResponse["status"] = 400;
-            $vResponse["error"] = "parcels dimension unit parameter missing.";
+            // $vResponse["status"] = 400;
+            // $vResponse["error"] = "parcels dimension unit parameter missing.";
         }
     }
     if (empty($vPayload["parcels"]["items"]) && count($vPayload["parcels"]["items"]) <= 0) {
@@ -109,10 +111,10 @@ if (empty($vPayload["parcels"])) {
                 $vResponse["status"] = 400;
                 $vResponse["error"] = "parcels items." . $key . " weight parameter missing.";
             } else {
-                if (empty($item["weight"]["unit"])) {
-                    $vResponse["status"] = 400;
-                    $vResponse["error"] = "parcels items." . $key . " weight unit parameter missing.";
-                }
+                // if (empty($item["weight"]["unit"])) {
+                //     $vResponse["status"] = 400;
+                //     $vResponse["error"] = "parcels items." . $key . " weight unit parameter missing.";
+                // }
                 if (empty($item["weight"]["value"])) {
                     $vResponse["status"] = 400;
                     $vResponse["error"] = "parcels items." . $key . " weight value parameter missing.";
@@ -122,13 +124,13 @@ if (empty($vPayload["parcels"])) {
             }
         }
     }
-    
-    $vPayload["parcels"]["weight"]["unit"] = "lb";
+
+    $vPayload["parcels"]["weight"]["unit"] = $units["weight"];
     $vPayload["parcels"]["weight"]["value"] = $weight;
     if (count($vResponse) <= 0) {
         $vParam["body"]["shipment"]["parcels"][] = $vPayload["parcels"];
     }
-    
+
 
     if (isset($vPayload["ship_date"])) {
         $vParam["body"]["ship_date"] = $vPayload["ship_date"];

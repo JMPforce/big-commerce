@@ -398,3 +398,27 @@ function getCountryCode($name)
     }
     return $code;
 }
+function getUnitsByCountry($name)
+{
+    switch (strtolower($name)) {
+        case 'united kingdom':
+        case 'great britain':
+        case 'uk':
+        case 'gb':
+        case 'gbr':
+        case 'ireland':
+        case 'ie':
+        case 'irl':
+            $units["weight"] = $GLOBALS["eu"]["weight_unit"];
+            $units["dimension"] = $GLOBALS["eu"]["dimension_unit"];
+            $units["currency"] = $GLOBALS["eu"]["currency"];
+            break;
+
+        default:
+            $units["weight"] = $GLOBALS["us"]["weight_unit"];
+            $units["dimension"] = $GLOBALS["us"]["dimension_unit"];
+            $units["currency"] = $GLOBALS["us"]["currency"];
+            break;
+    }
+    return $units;
+}
