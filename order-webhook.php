@@ -99,7 +99,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
 
                         $vParam["api_url"] =  "labels";
                         $vParam["method"] = "POST";
-                        $reference = "reference-" . $vOrderId . "-" . $row->product_id . "_" . ($i + 1);
+                        $reference = "reference-test-dhl1-" . $vOrderId . "-" . $row->product_id . "_" . ($i + 1);
                         $vParam["body"]["order_id"] = $reference;
                         $vParam["body"]["order_number"] = $reference;
                         $vParam["body"]["return_shipment"] = false;
@@ -144,6 +144,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                         $vParam["body"]["shipment"]["parcels"] = [$vParcels];
                         if ($cart->ship_from->country != $cart->ship_to->country) {
                             $vParam["body"]["customs"]["purpose"] = "personal";
+                            $vParam["body"]["customs"]["terms_of_trade"] = "dat";
                         }
 
                         // echo json_encode($vParam);
