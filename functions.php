@@ -400,7 +400,7 @@ function getCountryCode($name)
 }
 function getUnitsByCountry($name)
 {
-    print_r($GLOBALS["vConfig"]["eu"]);
+   
     switch (strtolower($name)) {
         case 'united kingdom':
         case 'great britain':
