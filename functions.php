@@ -400,7 +400,7 @@ function getCountryCode($name)
 }
 function getUnitsByCountry($name)
 {
-    print_r($GLOBALS["vConfig"]);
+    print_r($GLOBALS["vConfig"]["eu"]);
     switch (strtolower($name)) {
         case 'united kingdom':
         case 'great britain':
@@ -410,15 +410,15 @@ function getUnitsByCountry($name)
         case 'ireland':
         case 'ie':
         case 'irl':
-            $units["weight"] = $GLOBALS["vConfig"]["EU"]["weight_unit"];
-            $units["dimension"] = $GLOBALS["vConfig"]["EU"]["dimension_unit"];
-            $units["currency"] = $GLOBALS["vConfig"]["EU"]["currency"];
+            $units["weight"] = $GLOBALS["vConfig"]["eu"]["weight_unit"];
+            $units["dimension"] = $GLOBALS["vConfig"]["eu"]["dimension_unit"];
+            $units["currency"] = $GLOBALS["vConfig"]["eu"]["currency"];
             break;
 
         default:
-            $units["weight"] = $GLOBALS["vConfig"]["US"]["weight_unit"];
-            $units["dimension"] = $GLOBALS["vConfig"]["US"]["dimension_unit"];
-            $units["currency"] = $GLOBALS["vConfig"]["US"]["currency"];
+            $units["weight"] = $GLOBALS["vConfig"]["us"]["weight_unit"];
+            $units["dimension"] = $GLOBALS["vConfig"]["us"]["dimension_unit"];
+            $units["currency"] = $GLOBALS["vConfig"]["us"]["currency"];
             break;
     }
     return $units;
