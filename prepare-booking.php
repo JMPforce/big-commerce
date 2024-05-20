@@ -84,11 +84,11 @@ if (count($vResponse) > 0) {
     $vParam["body"]["channel_id"] = 1;
     // $vParam["body"]["currency"]["code"] = "USD";
     // $vParam["body"]["locale"] = "en-US";
-    $vParam["body"]["currency"]["code"] = "EUR";
-    $vParam["body"]["locale"] = "en-IE";
+    // $vParam["body"]["currency"]["code"] = "EUR";
+    // $vParam["body"]["locale"] = "en-IE";
     // print_r($vParam);
     $vResponseCartData = call_big_commerce_api($vParam);
-    // print_r($vResponseCartData);
+    // print_r($vResponseCartData);exit;
 
     if (!isset($vResponseCartData->data)) {
         echo json_encode($vResponseCartData);
