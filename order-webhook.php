@@ -99,7 +99,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
 
                         $vParam["api_url"] =  "labels";
                         $vParam["method"] = "POST";
-                        $reference = "reference-test-dhl1-" . $vOrderId . "-" . $row->product_id . "_" . ($i + 1);
+                        $reference = "reference-" . $vOrderId . "-" . $row->product_id . "-" . ($i + 1);
                         $vParam["body"]["order_id"] = $reference;
                         $vParam["body"]["order_number"] = $reference;
                         $vParam["body"]["return_shipment"] = false;
