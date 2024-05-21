@@ -16,18 +16,20 @@ if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
 }
 
 if (!empty($vPayload["shipper_account_id"])) {
-    $vParam["body"]["shipper_accounts"][]["id"] = $vPayload["shipper_account_id"];
+    $shipperAccountId = $vPayload["shipper_account_id"];
 } else {
-    $vParam["body"]["shipper_accounts"][]["id"] = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID"];
+    $shipperAccountId = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID"];
 }
 
 $vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API"] . "rates";
 if (isset($vPayload["api_mode"]) && $vPayload["api_mode"] == "prod") {
     $vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API_PROD"] . "rates";
-    $vParam["body"]["shipper_accounts"][]["id"] = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID_PROD"];
+    $shipperAccountId = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID_PROD"];
 }
+// $vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API_PROD"] . "rates";
+$vParam["body"]["shipper_accounts"][]["id"] = $shipperAccountId;
 
-
+// print_r($vParam);
 
 
 if (empty($vPayload["ship_from"])) {
@@ -153,7 +155,7 @@ if (count($vResponse) > 0) {
         v::$r = vR(400, $vResponse);
     }
 } else {
-    // echo json_encode($vParam["body"]);exit;
+    // echo json_encode($vParam);exit;
     $vReturnData = call_aftership_api($vParam);
 
     if (!isset($vReturnData->data)) {
