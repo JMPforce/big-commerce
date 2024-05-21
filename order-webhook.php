@@ -27,7 +27,9 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
         $vSql = "SELECT * FROM {$vTable} WHERE cart_id='" . $vOrderResponseData->cart_id . "'";
         $vResult = select($vConnection, $vSql);
         $vCartMeta = json_decode($vResult[0]["meta"]);
-        $vShipperInfo = json_decode($vResult[0]["shipper_info"]);
+        $vShippingData = json_decode($vResult[0]["shipper_info"]);
+        $vShipperInfo = $vShippingData->shipper;
+        $vApiMode = ($vShippingData->api_mode) ? $vShippingData->api_mode : "sandbox";
 
         closeConnection($vConnection);
 
@@ -71,7 +73,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                     $weightIndex = findIndexByName($vReturnProductData->data->custom_fields, "weight");
                     $weight = $vReturnProductData->data->custom_fields[$weightIndex]->value;
                     $vParcels["box_type"] = "custom";
-                    
+
 
                     for ($i = 0; $i < $row->quantity; $i++) {
                         $vParcels["dimension"]["width"] = intval($width);
@@ -98,6 +100,9 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
 
 
                         $vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API"] . "labels";
+                        if ($vApiMode == "prod") {
+                            $vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API_PROD"] . "labels";
+                        }
                         $vParam["method"] = "POST";
                         $reference = "reference-" . $vOrderId . "-" . $row->product_id . "-" . ($i + 1);
                         $vParam["body"]["order_id"] = $reference;
@@ -147,9 +152,9 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                             $vParam["body"]["customs"]["terms_of_trade"] = "dap";
                         }
 
-                        // echo json_encode($vParam);
-                        $vReturnData = call_aftership_api($vParam);
-                        echo json_encode($vReturnData);
+                        echo json_encode($vParam);
+                        // $vReturnData = call_aftership_api($vParam);
+                        // echo json_encode($vReturnData);
                     }
                 }
             }

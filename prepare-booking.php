@@ -100,7 +100,13 @@ if (count($vResponse) > 0) {
         $connection = db_connection();
         $data["cart_id"] = $cartId;
         $data["meta"] = json_encode($vPayload["cart_meta"]);
-        $data["shipper_info"] = json_encode($vPayload["shipper_info"]);
+        $vApiMode = "sandbox";
+        if (isset($vPayload["api_mode"]) && strtolower($vPayload["api_mode"]) == "prod") {
+            $vApiMode = "prod";
+        }
+        $vShipperInfo["api_mode"] = $vApiMode;
+        $vShipperInfo["shipper"] = $vPayload["shipper_info"];
+        $data["shipper_info"] = json_encode($vShipperInfo);
 
         $sql = "INSERT INTO {$vTable} (cart_id,meta,shipper_info,created) values ('" . $data["cart_id"] . "','" . $data["meta"] . "','" . $data["shipper_info"] . "',now()) RETURNING cart_id";
         $result = insert($connection, $sql);
