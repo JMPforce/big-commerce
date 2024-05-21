@@ -36,9 +36,13 @@ if (empty($vPayload["ship_from"])) {
     $vResponse["status"] = 400;
     $vResponse["error"] = "ship_from parameter missing.";
 } else {
-    if (empty($vPayload["ship_from"]["state"])) {
+    // if (empty($vPayload["ship_from"]["state"])) {
+    //     $vResponse["status"] = 400;
+    //     $vResponse["error"] = "ship_from state parameter missing.";
+    // }
+    if (empty($vPayload["ship_from"]["street1"])) {
         $vResponse["status"] = 400;
-        $vResponse["error"] = "ship_from state parameter missing.";
+        $vResponse["error"] = "ship_from street1 parameter missing.";
     }
     if (empty($vPayload["ship_from"]["postal_code"])) {
         $vResponse["status"] = 400;
@@ -58,13 +62,17 @@ if (empty($vPayload["ship_to"])) {
     $vResponse["status"] = 400;
     $vResponse["error"] = "ship_to parameter missing.";
 } else {
-    if (empty($vPayload["ship_to"]["state"])) {
-        $vResponse["status"] = 400;
-        $vResponse["error"] = "ship_to state parameter missing.";
-    }
+    // if (empty($vPayload["ship_to"]["state"])) {
+    //     $vResponse["status"] = 400;
+    //     $vResponse["error"] = "ship_to state parameter missing.";
+    // }
     if (empty($vPayload["ship_to"]["postal_code"])) {
         $vResponse["status"] = 400;
         $vResponse["error"] = "ship_to postal_code parameter missing.";
+    }
+    if (empty($vPayload["ship_to"]["street1"])) {
+        $vResponse["status"] = 400;
+        $vResponse["error"] = "ship_to street1 parameter missing.";
     }
     if (empty($vPayload["ship_to"]["country"])) {
         $vResponse["status"] = 400;
