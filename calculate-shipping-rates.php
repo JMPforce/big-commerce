@@ -14,16 +14,20 @@ if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
 } else {
     $vPayload = v::$a;
 }
-$vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API"] . "rates";
-if (isset($vPayload["api_mode"]) && $vPayload["api_mode"] == "prod") {
-    $vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API_PROD"] . "rates";
-}
 
 if (!empty($vPayload["shipper_account_id"])) {
     $vParam["body"]["shipper_accounts"][]["id"] = $vPayload["shipper_account_id"];
 } else {
     $vParam["body"]["shipper_accounts"][]["id"] = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID"];
 }
+
+$vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API"] . "rates";
+if (isset($vPayload["api_mode"]) && $vPayload["api_mode"] == "prod") {
+    $vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API_PROD"] . "rates";
+    $vParam["body"]["shipper_accounts"][]["id"] = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID_PROD"];
+}
+
+
 
 
 if (empty($vPayload["ship_from"])) {
