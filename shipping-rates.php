@@ -11,7 +11,7 @@ $vQuery = "";
 parse_str($_SERVER['QUERY_STRING'], $vQuery);
 
 
-$vParam["api_url"] =  "rates";
+$vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API"] . "rates";
 $vParam["method"] = "GET";
 $limit = 2;
 if (empty($vPayload["created_at_max"])) {

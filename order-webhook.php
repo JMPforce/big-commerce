@@ -97,7 +97,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                         $vParcels["weight"]["value"] = $vTotalWeight;
 
 
-                        $vParam["api_url"] =  "labels";
+                        $vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API"] . "labels";
                         $vParam["method"] = "POST";
                         $reference = "reference-" . $vOrderId . "-" . $row->product_id . "-" . ($i + 1);
                         $vParam["body"]["order_id"] = $reference;

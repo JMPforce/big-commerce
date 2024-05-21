@@ -204,7 +204,7 @@ function call_aftership_api($vParam)
 {
     $curl = curl_init();
 
-    $vCurlArray[CURLOPT_URL] = $GLOBALS["vConfig"]["AS_SHIPPING_API"] . $vParam["api_url"];
+    $vCurlArray[CURLOPT_URL] =  $vParam["api_url"];
     $vCurlArray[CURLOPT_RETURNTRANSFER] = true;
     $vCurlArray[CURLOPT_ENCODING] = "";
     $vCurlArray[CURLOPT_MAXREDIRS] = 10;

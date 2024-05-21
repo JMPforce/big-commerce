@@ -6,13 +6,18 @@ $vQueryString = "";
 $vResponse = [];
 
 
-$vParam["api_url"] =  "rates";
+
 $vParam["method"] = "POST";
 
 if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
     $vPayload = json_decode(file_get_contents('php://input'), true);
-} else
+} else {
     $vPayload = v::$a;
+}
+$vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API"] . "rates";
+if (isset($vPayload["api_mode"]) && $vPayload["api_mode"] == "prod") {
+    $vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API_PROD"] . "rates";
+}
 
 if (!empty($vPayload["shipper_account_id"])) {
     $vParam["body"]["shipper_accounts"][]["id"] = $vPayload["shipper_account_id"];
