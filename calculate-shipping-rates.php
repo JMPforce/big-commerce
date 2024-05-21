@@ -22,7 +22,7 @@ if (!empty($vPayload["shipper_account_id"])) {
 }
 
 $vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API"] . "rates";
-if (isset($vPayload["api_mode"]) && $vPayload["api_mode"] == "prod") {
+if (isset($vPayload["api_mode"]) && strtolower($vPayload["api_mode"]) == "prod") {
     $vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API_PROD"] . "rates";
     $shipperAccountId = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID_PROD"];
 }
