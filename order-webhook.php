@@ -152,9 +152,9 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                             $vParam["body"]["customs"]["terms_of_trade"] = "dap";
                         }
 
-                        echo json_encode($vParam);
-                        // $vReturnData = call_aftership_api($vParam);
-                        // echo json_encode($vReturnData);
+                        // echo json_encode($vParam);
+                        $vReturnData = call_aftership_api($vParam);
+                        echo json_encode($vReturnData);
                     }
                 }
             }
