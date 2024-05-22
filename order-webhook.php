@@ -20,7 +20,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
     $vOrderResponseData = call_big_commerce_api($vParam, "v2");
 
     $vCustomerId = $vOrderResponseData->customer_id;
-    if ($vOrderResponseData->id) {
+    if ($vOrderResponseData->id && $vOrderResponseData->status_id == 10 && strtolower($vOrderResponseData->status) == "completed") {
         $vConnection = db_connection();
         //fetch cart meta from DB
 
