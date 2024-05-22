@@ -12,7 +12,7 @@ if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
     $vPayload = v::$a;
 }
 
-if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
+if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vPayload["data"]["id"] && $vPayload["scope"] = "store/order/statusUpdated") {
     $vOrderId = $vPayload["data"]["id"];
     $vParam["api_url"] =  "orders/" . $vOrderId . "/?include=consignments.line_items";
     $vParam["method"] = "GET";
@@ -23,9 +23,9 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
     if ($vOrderResponseData->id && $vOrderResponseData->status_id == 10 && strtolower($vOrderResponseData->status) == "completed") {
         $vConnection = db_connection();
         //fetch cart meta from DB
-
         $vSql = "SELECT * FROM {$vTable} WHERE cart_id='" . $vOrderResponseData->cart_id . "'";
         $vResult = select($vConnection, $vSql);
+        
         $vCartMeta = json_decode($vResult[0]["meta"]);
         $vShippingData = json_decode($vResult[0]["shipper_info"]);
         $vShipperInfo = $vShippingData->shipper;
@@ -156,6 +156,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
 
                         // echo json_encode($vParam);
                         $vReturnData = call_aftership_api($vParam);
+                        
                         echo json_encode($vReturnData);
                     }
                 }
@@ -164,9 +165,8 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
     }
 }
 
-
+$vReturnData = ["status" => 200, "message" => "OK"];
 if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
-    $vReturnData = ["status" => 200, "message" => "OK"];
     echo json_encode($vReturnData);
 } else {
     v::$r = vR(200, $vReturnData);
