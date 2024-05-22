@@ -127,7 +127,8 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                         $vParam["body"]["shipment"]["ship_from"]["street1"] = $cart->ship_from->address;
                         if (!empty($cart->ship_from->city))
                             $vParam["body"]["shipment"]["ship_from"]["city"] = $cart->ship_from->city;
-                        $vParam["body"]["shipment"]["ship_from"]["state"] = $cart->ship_from->state;
+                        if ($cart->ship_from->state)
+                            $vParam["body"]["shipment"]["ship_from"]["state"] = $cart->ship_from->state;
                         $vParam["body"]["shipment"]["ship_from"]["postal_code"] = $cart->ship_from->postal_code;
                         $vParam["body"]["shipment"]["ship_from"]["phone"] = $cart->ship_from->phone;
                         $vParam["body"]["shipment"]["ship_from"]["email"] = $vCustomerResponseData->data[0]->email;
@@ -140,7 +141,8 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created") {
                         $vParam["body"]["shipment"]["ship_to"]["street1"] = $cart->ship_to->address;
                         if (!empty($cart->ship_to->city))
                             $vParam["body"]["shipment"]["ship_to"]["city"] = $cart->ship_to->city;
-                        $vParam["body"]["shipment"]["ship_to"]["state"] = $cart->ship_to->state;
+                        if ($cart->ship_to->state)
+                            $vParam["body"]["shipment"]["ship_to"]["state"] = $cart->ship_to->state;
                         $vParam["body"]["shipment"]["ship_to"]["postal_code"] = $cart->ship_to->postal_code;
                         $vParam["body"]["shipment"]["ship_to"]["phone"] = $cart->ship_to->phone;
                         $vParam["body"]["shipment"]["ship_to"]["email"] = $vCustomerResponseData->data[0]->email;
