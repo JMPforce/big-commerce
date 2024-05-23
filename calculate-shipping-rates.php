@@ -23,10 +23,10 @@ if (isset($vPayload["api_mode"]) && strtolower($vPayload["api_mode"]) == "prod")
     $vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API_PROD"] . "shipper-accounts";
     // $shipperAccountId = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID_PROD"];
 }
+$vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API_PROD"] . "shipper-accounts";
 $vParam["method"] = "GET";
 $shipperAccountId = [];
 $vShipperReturnData = call_aftership_api($vParam);
-// print_r($vShipperReturnData->data->shipper_accounts);
 if (isset($vShipperReturnData->meta) && $vShipperReturnData->meta->code==200) {
     foreach ($vShipperReturnData->data->shipper_accounts as $key => $shipper) {
         $shipperAccountId[]["id"]  = $shipper->id;
@@ -39,9 +39,8 @@ $vParam["method"] = "POST";
 $vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API"] . "rates";
 if (isset($vPayload["api_mode"]) && strtolower($vPayload["api_mode"]) == "prod") {
     $vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API_PROD"] . "rates";
-    // $shipperAccountId = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID_PROD"];
 }
-// $vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API_PROD"] . "rates";
+$vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API_PROD"] . "rates";
 
 $vParam["body"]["shipper_accounts"] = $shipperAccountId;
 
