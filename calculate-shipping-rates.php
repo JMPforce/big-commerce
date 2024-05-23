@@ -26,7 +26,7 @@ if (isset($vPayload["api_mode"]) && strtolower($vPayload["api_mode"]) == "prod")
 $vParam["method"] = "GET";
 $shipperAccountId = [];
 $vShipperReturnData = call_aftership_api($vParam);
-print_r($vShipperReturnData->data->shipper_accounts);
+// print_r($vShipperReturnData->data->shipper_accounts);
 if (isset($vShipperReturnData->meta) && $vShipperReturnData->meta->code==200) {
     foreach ($vShipperReturnData->data->shipper_accounts as $key => $shipper) {
         $shipperAccountId[]["id"]  = $shipper->id;
@@ -179,7 +179,7 @@ if (count($vResponse) > 0) {
     }
 } else {
     $vReturnData = call_aftership_api($vParam);
-    
+    print_r($vReturnData);
     if (!isset($vReturnData->data)) {
         echo json_encode($vReturnData);
     } else {
