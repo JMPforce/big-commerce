@@ -29,7 +29,7 @@ if (count($vResponse) > 0) {
     $vQuery = urlencode($vPayload["query"]);
 
     $vQueryString = "key=" .  $vApiKey . "&query=" . $vQuery . "&language=en";
-    if ($vPayload["country"]) {
+    if (isset($vPayload["country"])) {
         $vQueryString .= "&region=" . strtoupper($vPayload["country"]);
     }
     $vParam["api_url"] =  "https://maps.googleapis.com/maps/api/place/textsearch/json?" . $vQueryString;
