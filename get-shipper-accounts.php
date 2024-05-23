@@ -29,12 +29,12 @@ if (count($vResponse) > 0) {
 
     $vReturnData = call_aftership_api($vParam);
 
-    if (!isset($vReturnData->data)) {
+    if (!isset($vReturnData->meta)) {
         echo json_encode($vReturnData);
     } else {
         if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-            echo json_encode($vReturnData);
+            echo json_encode($vReturnData->data->shipper_accounts);
         else
-            v::$r = vR(200, $vReturnData);
+            v::$r = vR(200, $vReturnData->data->shipper_accounts);
     }
 }
