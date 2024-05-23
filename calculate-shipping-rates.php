@@ -179,7 +179,7 @@ if (count($vResponse) > 0) {
     }
 } else {
     $vReturnData = call_aftership_api($vParam);
-    print_r($vReturnData);
+    
     if (!isset($vReturnData->data)) {
         echo json_encode($vReturnData);
     } else {
