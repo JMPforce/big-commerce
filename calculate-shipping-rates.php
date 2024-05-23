@@ -67,7 +67,8 @@ if (empty($vPayload["ship_from"])) {
         $vResponse["status"] = 400;
         $vResponse["error"] = "ship_from country parameter missing.";
     } else {
-        $units = getUnitsByCountry($vPayload["ship_from"]["country"]);
+        // $units = getUnitsByCountry($vPayload["ship_from"]["country"]);
+        // $units = [];
     }
     if (count($vResponse) <= 0) {
         $vParam["body"]["shipment"]["ship_from"] = $vPayload["ship_from"];
@@ -159,7 +160,7 @@ if (empty($vPayload["parcels"])) {
         }
     }
 
-    $vPayload["parcels"]["weight"]["unit"] = $units["weight"];
+    $vPayload["parcels"]["weight"]["unit"] = "kg";
     $vPayload["parcels"]["weight"]["value"] = $weight;
     if (count($vResponse) <= 0) {
         $vParam["body"]["shipment"]["parcels"][] = $vPayload["parcels"];
