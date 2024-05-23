@@ -212,10 +212,10 @@ function call_google_place_api($vParam)
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => $vParam["method"],
-        // CURLOPT_HTTPHEADER => [
-        //     "Accept: application/json",
-        //     "Content-Type: application/json"
-        // ]
+        CURLOPT_HTTPHEADER => [
+            "Accept: application/json",
+            "Content-Type: application/json"
+        ]
     ));
 
     $vResponse = curl_exec($curl);
