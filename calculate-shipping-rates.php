@@ -5,7 +5,7 @@ $vQueryString = "";
 
 $vResponse = [];
 
-// $shipperAccountIdSandbox[]["id"]  = "3ba41ff5-59a7-4ff0-8333-64a4375c7f21";//USPS
+$shipperAccountIdSandbox[]["id"]  = "3ba41ff5-59a7-4ff0-8333-64a4375c7f21";//USPS
 $shipperAccountIdSandbox[]["id"]  = "6f43fe77-b056-45c3-bce4-9fec4040da0c";//FedEx
 if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
     $vPayload = json_decode(file_get_contents('php://input'), true);
