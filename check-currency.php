@@ -18,19 +18,20 @@ if (count($vResponse) > 0) {
     } else {
         v::$r = vR(400, $vResponse);
     }
-}else{
+} else {
 
     $vParam["api_url"] =  "currencies";
     $vParam["method"] = "GET";
 
     $vReturnData = call_big_commerce_api($vParam, "v2");
-
+    $currencyIndex = findIndexByKey($vReturnData, "is_default", false);
+    // print_r($vReturnData[$currencyIndex]);
     if (!isset($vReturnData->data)) {
         echo json_encode($vReturnData);
     } else {
         if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-            echo json_encode($vReturnData);
+            echo json_encode($vReturnData[$currencyIndex]);
         else
-            v::$r = vR(200, $vReturnData);
+            v::$r = vR(200, $vReturnData[$currencyIndex]);
     }
 }

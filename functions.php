@@ -395,6 +395,15 @@ function update_customer_address($vPayload)
     return call_big_commerce_api($vParam);
 }
 
+function findIndexByKey($array, $key, $value)
+{
+    foreach ($array as $index => $object) {
+        if ($object->{$key} === $value) {
+            return $index;
+        }
+    }
+    return -1; // Return -1 if the name is not found
+}
 function findIndexByProductId($array, $id)
 {
     foreach ($array as $index => $object) {
