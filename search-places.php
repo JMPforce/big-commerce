@@ -36,12 +36,12 @@ if (count($vResponse) > 0) {
     $vParam["method"] = "GET";
     $vReturnData = call_google_place_api($vParam);
 
-    if (!isset($vReturnData->data)) {
-        echo json_encode($vReturnData);
+    if (strtolower($vReturnData->status) != "ok" && count($vReturnData->results) <= 0) {
+        v::$r = vR(200, $vReturnData);
     } else {
         if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-            echo json_encode($vReturnData);
+            echo json_encode($vReturnData->results);
         else
-            v::$r = vR(200, $vReturnData);
+            v::$r = vR(200, $vReturnData->results);
     }
 }
