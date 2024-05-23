@@ -86,19 +86,19 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                             $vItems["quantity"] = 1;
                             $vItems["item_id"] = strval($row->product_id);
                             $vItems["origin_country"] = getCountryCode($cart->ship_from->country);
-                            $units = getUnitsByCountry($cart->ship_from->country);
-                            $vParcels["dimension"]["unit"] = $units["dimension"];
+                            // $units = getUnitsByCountry($cart->ship_from->country);
+                            $vParcels["dimension"]["unit"] = "cm";
                             // $vItems["price"]["currency"] = "USD";
-                            $vItems["price"]["currency"] = $units["currency"];
+                            $vItems["price"]["currency"] = $vOrderResponseData->currency_code;
                             $vItems["price"]["amount"] = intval($row->base_price);
 
-                            $vItems["weight"]["unit"] = $units["weight"];
+                            $vItems["weight"]["unit"] = "kg";
                             $vItems["weight"]["value"] = intval($weight);
                             $vTotalWeight = intval($weight);
 
                             $vParcels["items"] = [$vItems];
                             $vParcels["description"] = "Golf bags & luggage";
-                            $vParcels["weight"]["unit"] = $units["weight"];
+                            $vParcels["weight"]["unit"] = "kg";
                             $vParcels["weight"]["value"] = $vTotalWeight;
 
 
