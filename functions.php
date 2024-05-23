@@ -206,8 +206,8 @@ function call_google_place_api($vParam)
         "Accept: application/json",
         "Content-Type: application/json"
     ];
-    if (!empty($vParam['X-Goog-FieldMask'])) {
-        array_push($vHeaders, "X-Goog-Api-Key: " . $GLOBALS["vConfig"]["PLACE_API_KEY"], "X-Goog-FieldMask:" . $vParam['X-Goog-FieldMask']);
+    if (!empty($vParam['fields'])) {
+        array_push($vHeaders, "X-Goog-Api-Key: " . $GLOBALS["vConfig"]["PLACE_API_KEY"], "X-Goog-FieldMask:" . $vParam['fields']);
     }
     curl_setopt_array($curl, array(
         CURLOPT_URL => $vParam["api_url"],
