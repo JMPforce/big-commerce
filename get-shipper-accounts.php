@@ -23,7 +23,7 @@ if (count($vResponse) > 0) {
     $vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API"] . "shipper-accounts";
     if (isset($vPayload["api_mode"]) && strtolower($vPayload["api_mode"]) == "prod") {
         $vParam["api_url"] =  $GLOBALS["vConfig"]["AS_SHIPPING_API_PROD"] . "shipper-accounts";
-        $shipperAccountId = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID_PROD"];
+        // $shipperAccountId = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID_PROD"];
     }
     $vParam["method"] = "GET";
 
