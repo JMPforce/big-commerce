@@ -170,7 +170,7 @@ function call_aftership_tracking_api($vParam)
 
 function get_country_code($name)
 {
-    echo $name;
+    // echo $name;
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
@@ -196,6 +196,39 @@ function get_country_code($name)
         return ["status" => 400, "message" => "cURL Error #:" . $err];
     } else {
 
+        return $vReturnData;
+    }
+}
+function call_google_place_api($vParam)
+{
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => $vParam["api_url"],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => $vParam["method"],
+        // CURLOPT_HTTPHEADER => [
+        //     "Accept: application/json",
+        //     "Content-Type: application/json"
+        // ]
+    ));
+
+    $vResponse = curl_exec($curl);
+
+    curl_close($curl);
+    $vReturnData = json_decode($vResponse);
+    $err = curl_error($curl);
+
+    curl_close($curl);
+
+    if ($err) {
+        return ["status" => 400, "message" => "cURL Error #:" . $err];
+    } else {
         return $vReturnData;
     }
 }
