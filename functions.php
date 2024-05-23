@@ -202,7 +202,13 @@ function get_country_code($name)
 function call_google_place_api($vParam)
 {
     $curl = curl_init();
-
+    $vHeaders = [
+        "Accept: application/json",
+        "Content-Type: application/json"
+    ];
+    if (!empty($vParam['X-Goog-FieldMask'])) {
+        array_push($vHeaders, "X-Goog-Api-Key: " . $GLOBALS["vConfig"]["PLACE_API_KEY"], "X-Goog-FieldMask:" . $vParam['X-Goog-FieldMask']);
+    }
     curl_setopt_array($curl, array(
         CURLOPT_URL => $vParam["api_url"],
         CURLOPT_RETURNTRANSFER => true,
@@ -212,10 +218,7 @@ function call_google_place_api($vParam)
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => $vParam["method"],
-        CURLOPT_HTTPHEADER => [
-            "Accept: application/json",
-            "Content-Type: application/json"
-        ]
+        CURLOPT_HTTPHEADER => $vHeaders
     ));
 
     $vResponse = curl_exec($curl);
