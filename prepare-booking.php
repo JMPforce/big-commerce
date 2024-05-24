@@ -49,46 +49,54 @@ if (count($vResponse) > 0) {
     }
 } else {
     //Query customer using email address
-    $vParam["api_url"] =  "customers?include=addresses&email:in=" . $vPayload["billing_address"]["email"];
-    $vParam["method"] = "GET";
-    $vResponseCustomerData = call_big_commerce_api($vParam);
+    // $vParam["api_url"] =  "customers?include=addresses&email:in=" . $vPayload["billing_address"]["email"];
+    // $vParam["method"] = "GET";
+    // $vResponseCustomerData = call_big_commerce_api($vParam);
     // print_r($vResponseCustomerData->data);
-    if (isset($vResponseCustomerData) && count($vResponseCustomerData->data) > 0) {
-        $vParam["body"]["customer_id"] = $vResponseCustomerData->data[0]->id;
-        $vPayload["billing_address"]["first_name"] = $vResponseCustomerData->data[0]->first_name;
-        $vPayload["billing_address"]["last_name"] = $vResponseCustomerData->data[0]->last_name;
-        if (!empty($vResponseCustomerData->data[0]->company))
-            $vPayload["billing_address"]["company"] = $vResponseCustomerData->data[0]->company;
-        if (!empty($vResponseCustomerData->data[0]->phone))
-            $vPayload["billing_address"]["phone"] = $vResponseCustomerData->data[0]->phone;
-        if (!empty($vResponseCustomerData->data[0]->address_count) && $vResponseCustomerData->data[0]->address_count > 0) {
-            $customerBillingAddress = $vResponseCustomerData->data[0]->addresses[$vResponseCustomerData->data[0]->address_count - 1];
-            $vPayload["billing_address"]["first_name"] = $customerBillingAddress->first_name;
-            $vPayload["billing_address"]["last_name"] = $customerBillingAddress->last_name;
-            $vPayload["billing_address"]["address1"] = $customerBillingAddress->address1;
-            $vPayload["billing_address"]["city"] = $customerBillingAddress->city;
-            $vPayload["billing_address"]["state"] = $customerBillingAddress->state_or_province;
-            // $vPayload["billing_address"]["state_or_province_code"] = $customerBillingAddress->state;
-            $vPayload["billing_address"]["company"] = $customerBillingAddress->company;
-            $vPayload["billing_address"]["phone"] = $customerBillingAddress->phone;
-            $vPayload["billing_address"]["postal_code"] = $customerBillingAddress->postal_code;
-            $vPayload["billing_address"]["country_code"] = $customerBillingAddress->country_code;
-        }
-    } else {
-        $vParam["body"]["customer_id"] = 0;
-    }
+    // if (isset($vResponseCustomerData) && count($vResponseCustomerData->data) > 0) {
+    //     $vParam["body"]["customer_id"] = $vResponseCustomerData->data[0]->id;
+    //     $vPayload["billing_address"]["first_name"] = $vResponseCustomerData->data[0]->first_name;
+    //     $vPayload["billing_address"]["last_name"] = $vResponseCustomerData->data[0]->last_name;
+    //     if (!empty($vResponseCustomerData->data[0]->company))
+    //         $vPayload["billing_address"]["company"] = $vResponseCustomerData->data[0]->company;
+    //     if (!empty($vResponseCustomerData->data[0]->phone))
+    //         $vPayload["billing_address"]["phone"] = $vResponseCustomerData->data[0]->phone;
+    //     if (!empty($vResponseCustomerData->data[0]->address_count) && $vResponseCustomerData->data[0]->address_count > 0) {
+    //         $customerBillingAddress = $vResponseCustomerData->data[0]->addresses[$vResponseCustomerData->data[0]->address_count - 1];
+    //         $vPayload["billing_address"]["first_name"] = $customerBillingAddress->first_name;
+    //         $vPayload["billing_address"]["last_name"] = $customerBillingAddress->last_name;
+    //         $vPayload["billing_address"]["address1"] = $customerBillingAddress->address1;
+    //         $vPayload["billing_address"]["city"] = $customerBillingAddress->city;
+    //         $vPayload["billing_address"]["state"] = $customerBillingAddress->state_or_province;
+    //         // $vPayload["billing_address"]["state_or_province_code"] = $customerBillingAddress->state;
+    //         $vPayload["billing_address"]["company"] = $customerBillingAddress->company;
+    //         $vPayload["billing_address"]["phone"] = $customerBillingAddress->phone;
+    //         $vPayload["billing_address"]["postal_code"] = $customerBillingAddress->postal_code;
+    //         $vPayload["billing_address"]["country_code"] = $customerBillingAddress->country_code;
+    //     }
+    // } else {
+    //     $vParam["body"]["customer_id"] = 0;
+    // }
+    
+    //Get store default currency
+    $vParamC["api_url"] =  "currencies";
+    $vParamC["method"] = "GET";
+    $vReturnDataC = call_big_commerce_api($vParamC, "v2");
+    $currencyIndex = findIndexByKey($vReturnDataC, "is_default", true);
+    
     //create cart
-    $vParam["api_url"] =  "carts";
+    $vParam["body"]["customer_id"] = 0;
+    $vParam["api_url"] =  "carts?include=redirect_urls";
     $vParam["method"] = "POST";
 
-    $vParam["body"]["channel_id"] = 1;
-    // $vParam["body"]["currency"]["code"] = "USD";
-    // $vParam["body"]["locale"] = "en-US";
+    // $vParam["body"]["channel_id"] = 1;
+    $vParam["body"]["currency"]["code"] = $vReturnDataC[$currencyIndex]->currency_code;
+    $vParam["body"]["locale"] = "en-US";
     // $vParam["body"]["currency"]["code"] = "EUR";
     // $vParam["body"]["locale"] = "en-IE";
-    // print_r($vParam);
+    // print_r($vParam);exit;
     $vResponseCartData = call_big_commerce_api($vParam);
-    // print_r($vResponseCartData);exit;
+    // echo json_encode($vResponseCartData);exit;
 
     if (!isset($vResponseCartData->data)) {
         echo json_encode($vResponseCartData);
@@ -111,69 +119,77 @@ if (count($vResponse) > 0) {
         $sql = "INSERT INTO {$vTable} (cart_id,meta,shipper_info,created) values ('" . $data["cart_id"] . "','" . $data["meta"] . "','" . $data["shipper_info"] . "',now()) RETURNING cart_id";
         $result = insert($connection, $sql);
         closeConnection($connection);
-        //cart redirectu url
-        $vParam["api_url"] =  "carts/" . $cartId . "/redirect_urls";
-        $vParam["method"] = "POST";
-        $vResponseDataCart = call_big_commerce_api($vParam);
-        //push cart_id with the response
-        $vResponseDataCart->data->cart_id = $cartId;
-        // print_r($vResponseDataCart->data);exit;
-        if (!isset($vResponseDataCart->data)) {
-            echo json_encode($vResponseDataCart);
-        } else {
-            if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-                echo json_encode($vResponseDataCart->data);
-            else {
-                // echo json_encode($vResponseDataCart->data);
-                v::$r = vR(200, $vResponseDataCart->data);
-            }
-
-            // exit;
-            //add billing address
-            // unset($vParam["body"]);
-            // $vParam["api_url"] = "checkouts/" . $cartId . "/billing-address";
-            // $vParam["body"] = $vPayload["billing_address"];
-            // print_r($vParam);
-            // $vResponseDataBilling = call_big_commerce_api($vParam);
-            //    print_r($vResponseDataBilling);
-            //add shipping address
-            // if (isset($vResponseDataBilling->data)) {
-            // unset($vParam["body"]);
-            // $vParam["api_url"] = "checkouts/" . $cartId . "/consignments";
-            // foreach ($vPayload["shipping_address"] as $key => $shippingAddress) {
-            //     $consignments[$key]["address"] = $shippingAddress;
-            //     if ($vReturnData->data->line_items->physical_items) {
-            //         foreach ($vReturnData->data->line_items->physical_items as $key2 => $item) {
-            //             $consignments[$key]["line_items"][$key2]["item_id"] = $item->id;
-            //             $consignments[$key]["line_items"][$key2]["quantity"] = $item->quantity;
-            //         }
-            //     }
-            //     if ($vReturnData->data->line_items->digital_items) {
-            //         foreach ($vReturnData->data->line_items->digital_items as $key3 => $item) {
-            //             $consignments[$key]["line_items"][$key3]["item_id"] = $item->id;
-            //             $consignments[$key]["line_items"][$key3]["quantity"] = $item->quantity;
-            //         }
-            //     }
-            // }
-            // $vParam["body"] = $consignments;
-            //    print_r($vParam);exit;
-            // $vResponseConsignments = call_big_commerce_api($vParam);
-            // print_r($vResponseConsignments);
-            // if (isset($vResponseConsignments->data)) {
-            //     if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-            //         echo json_encode($vResponseDataCart->data);
-            //     else
-            //         v::$r = vR(200, $vResponseDataCart->data);
-            // } else {
-            //     echo json_encode($vResponseConsignments);
-            // }
-            //     if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-            //         echo json_encode($vResponseDataCart->data);
-            //     else
-            //         v::$r = vR(200, $vResponseDataCart->data);
-            // } else {
-            //     echo json_encode($vResponseDataBilling);
-            // }
+        // echo json_encode($vResponseCartData);
+        if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
+            echo json_encode($vResponseCartData->data->redirect_urls);
+        else {
+            v::$r = vR(200, $vResponseCartData->data->redirect_urls);
         }
+        //cart redirectu url
+        // $vParam["api_url"] =  "carts/" . $cartId . "/redirect_urls";
+        // $vParam["method"] = "POST";
+        // $vResponseDataCart = call_big_commerce_api($vParam);
+        // //push cart_id with the response
+        // $vResponseDataCart->data->cart_id = $cartId;
+        // print_r($vResponseDataCart->data);exit;
+        // if (!isset($vResponseDataCart->data)) {
+        //     echo json_encode($vResponseDataCart);
+        // } else {
+        // if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
+        //     echo json_encode($vResponseDataCart->data);
+        // else {
+        //     // echo json_encode($vResponseDataCart->data);
+        //     v::$r = vR(200, $vResponseDataCart->data);
+        // }
+
+        // exit;
+        //add billing address
+        // unset($vParam["body"]);
+        // $vParam["api_url"] = "checkouts/" . $cartId . "/billing-address";
+        // $vParam["body"] = $vPayload["billing_address"];
+        // // print_r($vParam);exit;
+        // $vResponseDataBilling = call_big_commerce_api($vParam);
+        //    echo json_encode($vResponseDataBilling);
+        // //add shipping address
+        // if (isset($vResponseDataBilling->data)) {
+        // unset($vParam["body"]);
+        // $vParam["api_url"] = "checkouts/" . $cartId . "/consignments";
+        // foreach ($vPayload["shipping_address"] as $key => $shippingAddress) {
+        //     $consignments[$key]["address"] = $shippingAddress;
+        // if ($vResponseCartData->data->line_items->physical_items) {
+        //     foreach ($vResponseCartData->data->line_items->physical_items as $key2 => $item) {
+        //         $consignments[$key]["line_items"][$key2]["item_id"] = $item->id;
+        //         $consignments[$key]["line_items"][$key2]["quantity"] = $item->quantity;
+        //     }
+        // }
+        // if ($vResponseCartData->data->line_items->digital_items) {
+        //     foreach ($vResponseCartData->data->line_items->digital_items as $key3 => $item) {
+        //         $consignments[$key]["line_items"][$key3]["item_id"] = $item->id;
+        //         $consignments[$key]["line_items"][$key3]["quantity"] = $item->quantity;
+        //     }
+        // }
+        // }
+        // $vParam["body"] = $consignments;
+        // print_r($vParam);
+        // exit;
+        // $vResponseConsignments = call_big_commerce_api($vParam);
+        // print_r($vResponseConsignments);
+        // if (isset($vResponseConsignments->data)) {
+        //     if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
+        //         echo json_encode($vResponseDataCart->data);
+        //     else
+        //         v::$r = vR(200, $vResponseDataCart->data);
+        // } else {
+        //     echo json_encode($vResponseConsignments);
+        // }
+        //     if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
+        //         echo json_encode($vResponseDataCart->data);
+        //     } else {
+        //         v::$r = vR(200, $vResponseDataCart->data);
+        //     }
+        // } else {
+        //     echo json_encode($vResponseDataBilling);
+        // }
+        //}
     }
 }

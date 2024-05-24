@@ -19,13 +19,13 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
     $vParam["method"] = "GET";
     //order details
     $vOrderResponseData = call_big_commerce_api($vParam, "v2");
-    
+
     $vCustomerId = $vOrderResponseData->customer_id;
     if ($vOrderResponseData->id && $vOrderResponseData->status_id == 10 && strtolower($vOrderResponseData->status) == "completed") {
         $vConnection = db_connection();
         //fetch cart meta from DB
         $vSql = "SELECT * FROM {$vTable} WHERE cart_id='" . $vOrderResponseData->cart_id . "' AND label_created=false AND label_ids is NULL";
-       
+
         $vResult = select($vConnection, $vSql);
 
         if (isset($vResult) && count($vResult) > 0) {
@@ -47,18 +47,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                 foreach ($vOrderResponseData->consignments as $data) {
 
                     foreach ($data->downloads[0]->line_items as $key => $row) {
-                        //create order meta
-                        // $vOrderMeta["permission_set"] = "write_and_sf_access";
-                        // $vOrderMeta["namespace"] = "Shipment_" . $vOrderId . "_" . ($index + 1);
-                        // $vOrderMeta["key"] = "shipment_" . $vOrderId . "_" . ($index + 1);
-                        // $vOrderMeta["value"] = json_encode($cart);
-                        // $vOrderMeta["description"] = "Shipment for order " . $vOrderId;
-                        // $vParam["api_url"] =  "orders/" . $vOrderId . "/metafields";
-                        // $vParam["method"] = "POST";
-                        // $vParam["body"] = $vOrderMeta;
-                        // $vOrderMetaResponseData = call_big_commerce_api($vParam);
-                        //
-                        unset($vParam["body"]);
+
                         $vParam["api_url"] =  "catalog/products/" . $row->product_id . "?include_fields=id,name&include=custom_fields";
                         $vParam["method"] = "GET";
                         $vItems = [];
@@ -166,6 +155,16 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                                 (isset($vReturnData->data) && $vReturnData->data->status = 'created')
                             ) {
                                 $vLabelId[] = $vReturnData->data;
+                                //create order meta
+                                $vOrderMeta["permission_set"] = "write_and_sf_access";
+                                $vOrderMeta["namespace"] = "Label information";
+                                $vOrderMeta["key"] = "label URL " .$reference;
+                                $vOrderMeta["value"] = $vReturnData->data->files->label->url;
+                                $vOrderMeta["description"] = "Label URL ".$reference;
+                                $vParam["api_url"] =  "orders/" . $vOrderId . "/metafields";
+                                $vParam["method"] = "POST";
+                                $vParam["body"] = $vOrderMeta;
+                                $vOrderMetaResponseData = call_big_commerce_api($vParam);
                             }
                             echo json_encode($vReturnData);
                         }
