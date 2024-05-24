@@ -90,7 +90,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                             $vParcels["dimension"]["unit"] = "cm";
                             // $vItems["price"]["currency"] = "USD";
                             $vItems["price"]["currency"] = $vOrderResponseData->currency_code;
-                            $vItems["price"]["amount"] = intval($row->base_price);
+                            $vItems["price"]["amount"] = floatval($row->base_price);
 
                             $vItems["weight"]["unit"] = "kg";
                             $vItems["weight"]["value"] = intval($weight);
@@ -157,7 +157,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                                 $vParam["body"]["customs"]["terms_of_trade"] = "dap";
                             }
 
-                            // echo json_encode($vParam);
+                            // echo json_encode($vParam);exit;
                             $vReturnData = call_aftership_api($vParam);
                             if (
                                 (isset($vReturnData->meta) && $vReturnData->meta->code == 200)
