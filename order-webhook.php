@@ -24,7 +24,8 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
     if ($vOrderResponseData->id && $vOrderResponseData->status_id == 10 && strtolower($vOrderResponseData->status) == "completed") {
         $vConnection = db_connection();
         //fetch cart meta from DB
-        echo $vSql = "SELECT * FROM {$vTable} WHERE cart_id='" . $vOrderResponseData->cart_id . "' AND label_created=false AND label_ids is NULL";
+        $vSql = "SELECT * FROM {$vTable} WHERE cart_id='" . $vOrderResponseData->cart_id . "' AND label_created=false AND label_ids is NULL";
+       
         $vResult = select($vConnection, $vSql);
 
         if (isset($vResult) && count($vResult) > 0) {
@@ -164,7 +165,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                                 &&
                                 (isset($vReturnData->data) && $vReturnData->data->status = 'created')
                             ) {
-                                $vLabelId[] = $vReturnData->data->id;
+                                $vLabelId[] = $vReturnData->data;
                             }
                             echo json_encode($vReturnData);
                         }
@@ -178,7 +179,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                 closeConnection($vConnection);
             }
         } else {
-            echo "Label already created";
+            echo "Label already created.";
         }
     }
 }
