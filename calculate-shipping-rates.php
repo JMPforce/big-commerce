@@ -187,10 +187,23 @@ if (count($vResponse) > 0) {
     if (!isset($vReturnData->data)) {
         echo json_encode($vReturnData);
     } else {
+        //Get currency, FedEx return price in USD and DHL returns in EUR, So we need to convert them to store default currency
+        $vParamC["api_url"] =  "currencies";
+        $vParamC["method"] = "GET";
+        $vReturnDataC = call_big_commerce_api($vParamC, "v2");
+        $currencyIndex = findIndexByKey($vReturnDataC, "is_default", true);
+        $vDefaultCurrency = $vReturnDataC[$currencyIndex]->currency_code;
+
         foreach ($vReturnData->data->rates as $key => $rates) {
             $vAmount = $rates->total_charge->amount;
+            $vCurrency = $rates->total_charge->currency;
+            $vRatesCurrencyIndex = findIndexByKey($vReturnDataC, "currency_code", $vCurrency);
             $vFcActualCosts["amount"] = $vAmount + (($vPercentage / 100) * $vAmount);
-            $vFcActualCosts["currency"] = $rates->total_charge->currency;
+            if ($vDefaultCurrency != $vReturnDataC[$vRatesCurrencyIndex]->currency_code) {
+                //Convert currency to store default
+                $vFcActualCosts["amount"] = ($vAmount + (($vPercentage / 100) * $vAmount)) * $vReturnDataC[$vRatesCurrencyIndex]->currency_exchange_rate;
+            }
+            $vFcActualCosts["currency"] = $vDefaultCurrency;
             $vReturnData->data->rates[$key]->fc_actual_costs = $vFcActualCosts;
         }
 

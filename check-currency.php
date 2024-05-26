@@ -24,9 +24,7 @@ if (count($vResponse) > 0) {
     $vParam["method"] = "GET";
 
     $vReturnData = call_big_commerce_api($vParam, "v2");
-    // print_r($vReturnData);
     $currencyIndex = findIndexByKey($vReturnData, "is_default", true);
-    // print_r($vReturnData[$currencyIndex]);
     if (!isset($vReturnData)) {
         echo json_encode($vReturnData);
     } else {
