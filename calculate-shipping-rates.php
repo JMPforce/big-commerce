@@ -139,7 +139,7 @@ if (empty($vPayload["parcels"])) {
         $vParcels["box_type"] = "custom";
         $vParcels["weight"]["unit"] = $vWUnit;
         $vParcels["weight"]["value"] = floatval($vWeight * $vQuantity);
-        
+
         $vParam["body"]["shipment"]["parcels"][] = $vParcels;
         $vParam["body"]["shipment"]["delivery_instructions"] = "Handle with care";
 
@@ -167,10 +167,16 @@ if (count($vResponse) > 0) {
                 $vAmount = $rates->total_charge->amount;
                 $vCurrency = $rates->total_charge->currency;
                 $vRatesCurrencyIndex = findIndexByKey($vReturnDataC, "currency_code", $vCurrency);
-                $vFcActualCosts["amount"] = $vAmount + (($vPercentage / 100) * $vAmount);
+                if ($vPercentage > 0)
+                    $vFcActualCosts["amount"] = $vAmount + (($vPercentage / 100) * $vAmount);
+                else
+                    $vFcActualCosts["amount"] = $vAmount;
                 if ($vDefaultCurrency != $vReturnDataC[$vRatesCurrencyIndex]->currency_code) {
                     //Convert currency to store default
-                    $vFcActualCosts["amount"] = ($vAmount + (($vPercentage / 100) * $vAmount)) * $vReturnDataC[$vRatesCurrencyIndex]->currency_exchange_rate;
+                    if ($vPercentage > 0)
+                        $vFcActualCosts["amount"] = ($vAmount + (($vPercentage / 100) * $vAmount)) * $vReturnDataC[$vRatesCurrencyIndex]->currency_exchange_rate;
+                    else
+                        $vFcActualCosts["amount"] = $vAmount * $vReturnDataC[$vRatesCurrencyIndex]->currency_exchange_rate;
                 }
                 $vFcActualCosts["currency"] = $vDefaultCurrency;
                 $vReturnData->data->rates[$key]->fc_actual_costs = $vFcActualCosts;
