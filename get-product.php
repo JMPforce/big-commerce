@@ -22,19 +22,14 @@ if (count($vResponse) > 0) {
     } else {
         v::$r = vR(400, $vResponse);
     }
-}else{
-
-    $vParam["api_url"] =  "catalog/products/" . $vPayload["product_id"];
-    $vParam["method"] = "GET";
-
-    $vReturnData = call_big_commerce_api($vParam);
-
+} else {
+    $vReturnData = get_product($vPayload["product_id"]);
     if (!isset($vReturnData->data)) {
         echo json_encode($vReturnData);
     } else {
         if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-            echo json_encode($vReturnData);
+            echo json_encode($vReturnData->data);
         else
-            v::$r = vR(200, $vReturnData);
+            v::$r = vR(200, $vReturnData->data);
     }
 }

@@ -2,6 +2,8 @@
 require_once "config.php";
 require_once "functions.php";
 $vPercentage = $GLOBALS["vConfig"]["FC_RATES_PERCENTAGE"];
+$vDUnit = $GLOBALS["vConfig"]["D_UNITS"];
+$vWUnit = $GLOBALS["vConfig"]["W_UNITS"];
 $vQueryString = "";
 
 $vResponse = [];
@@ -53,10 +55,6 @@ if (empty($vPayload["ship_from"])) {
     $vResponse["status"] = 400;
     $vResponse["error"] = "ship_from parameter missing.";
 } else {
-    // if (empty($vPayload["ship_from"]["state"])) {
-    //     $vResponse["status"] = 400;
-    //     $vResponse["error"] = "ship_from state parameter missing.";
-    // }
     if (empty($vPayload["ship_from"]["street1"])) {
         $vResponse["status"] = 400;
         $vResponse["error"] = "ship_from street1 parameter missing.";
@@ -68,10 +66,7 @@ if (empty($vPayload["ship_from"])) {
     if (empty($vPayload["ship_from"]["country"])) {
         $vResponse["status"] = 400;
         $vResponse["error"] = "ship_from country parameter missing.";
-    } else {
-        // $units = getUnitsByCountry($vPayload["ship_from"]["country"]);
-        // $units = [];
-    }
+    } else 
     if (count($vResponse) <= 0) {
         $vParam["body"]["shipment"]["ship_from"] = $vPayload["ship_from"];
     }
@@ -80,10 +75,6 @@ if (empty($vPayload["ship_to"])) {
     $vResponse["status"] = 400;
     $vResponse["error"] = "ship_to parameter missing.";
 } else {
-    // if (empty($vPayload["ship_to"]["state"])) {
-    //     $vResponse["status"] = 400;
-    //     $vResponse["error"] = "ship_to state parameter missing.";
-    // }
     if (empty($vPayload["ship_to"]["postal_code"])) {
         $vResponse["status"] = 400;
         $vResponse["error"] = "ship_to postal_code parameter missing.";
@@ -105,72 +96,56 @@ if (empty($vPayload["parcels"])) {
     $vResponse["status"] = 400;
     $vResponse["error"] = "parcels parameter missing.";
 } else {
-    if (empty($vPayload["parcels"]["box_type"])) {
+
+    if (empty($vPayload["parcels"]["item_id"])) {
         $vResponse["status"] = 400;
-        $vResponse["error"] = "parcels box_type parameter missing.";
+        $vResponse["error"] = "Parcels item_id parameter missing.";
     }
-    if (empty($vPayload["parcels"]["dimension"])) {
+    $vReturnDataP = get_product($vPayload["parcels"]["item_id"]);
+    if (empty($vReturnDataP->data)) {
         $vResponse["status"] = 400;
-        $vResponse["error"] = "parcels dimension parameter missing.";
+        $vResponse["error"] = "Product not found.";
     } else {
-        if (empty($vPayload["parcels"]["dimension"]["width"])) {
-            $vResponse["status"] = 400;
-            $vResponse["error"] = "parcels dimension width parameter missing.";
-        }
-        if (empty($vPayload["parcels"]["dimension"]["height"])) {
-            $vResponse["status"] = 400;
-            $vResponse["error"] = "parcels dimension height parameter missing.";
-        }
-        if (empty($vPayload["parcels"]["dimension"]["depth"])) {
-            $vResponse["status"] = 400;
-            $vResponse["error"] = "parcels dimension depth parameter missing.";
-        }
-        if (empty($vPayload["parcels"]["dimension"]["unit"])) {
-            // $vResponse["status"] = 400;
-            // $vResponse["error"] = "parcels dimension unit parameter missing.";
-        }
-    }
-    if (empty($vPayload["parcels"]["items"]) && count($vPayload["parcels"]["items"]) <= 0) {
-        $vResponse["status"] = 400;
-        $vResponse["error"] = "parcels items parameter missing.";
-    } else {
-        $weight = 0;
-        foreach ($vPayload["parcels"]["items"] as $key => $item) {
-            if (empty($item["quantity"])) {
-                $vResponse["status"] = 400;
-                $vResponse["error"] = "parcels items." . $key . " quantity parameter missing.";
-            }
-            if (empty($item["description"])) {
-                $vResponse["status"] = 400;
-                $vResponse["error"] = "parcels items." . $key . " description parameter missing.";
-            }
-            if (empty($item["weight"])) {
-                $vResponse["status"] = 400;
-                $vResponse["error"] = "parcels items." . $key . " weight parameter missing.";
-            } else {
-                // if (empty($item["weight"]["unit"])) {
-                //     $vResponse["status"] = 400;
-                //     $vResponse["error"] = "parcels items." . $key . " weight unit parameter missing.";
-                // }
-                if (empty($item["weight"]["value"])) {
-                    $vResponse["status"] = 400;
-                    $vResponse["error"] = "parcels items." . $key . " weight value parameter missing.";
-                } else {
-                    $weight += ($item["quantity"] * $item["weight"]["value"]);
-                }
-            }
-        }
-    }
+        $vParamC["api_url"] =  "currencies";
+        $vParamC["method"] = "GET";
+        $vReturnDataC = call_big_commerce_api($vParamC, "v2");
+        $currencyIndex = findIndexByKey($vReturnDataC, "is_default", true);
+        $vDefaultCurrency = $vReturnDataC[$currencyIndex]->currency_code;
 
-    $vPayload["parcels"]["weight"]["unit"] = "lb";
-    $vPayload["parcels"]["weight"]["value"] = $weight;
-    if (count($vResponse) <= 0) {
-        $vParam["body"]["shipment"]["parcels"][] = $vPayload["parcels"];
-    }
+        $vCustomFields = $vReturnDataP->data->custom_fields;
+        $vParcels["description"] = "Golf bags & luggage";
+        $vParcels["dimension"]["unit"] = $vDUnit;
+        //find item dimensions
+        $widthIndex = findIndexByName($vReturnDataP->data->custom_fields, "width");
+        $vParcels["dimension"]["width"] = floatval($vReturnDataP->data->custom_fields[$widthIndex]->value);
+        $heightIndex = findIndexByName($vReturnDataP->data->custom_fields, "height");
+        $vParcels["dimension"]["height"] = floatval($vReturnDataP->data->custom_fields[$heightIndex]->value);
+        $depthIndex = findIndexByName($vReturnDataP->data->custom_fields, "depth");
+        $vParcels["dimension"]["depth"] = floatval($vReturnDataP->data->custom_fields[$depthIndex]->value);
+        $weightIndex = findIndexByName($vReturnDataP->data->custom_fields, "weight");
+        $vWeight = $vReturnDataP->data->custom_fields[$weightIndex]->value;
 
+        $vQuantity = ($vPayload["parcels"]["quantity"]) ? $vPayload["parcels"]["quantity"] : 1;
+        $vItems["description"] = "Golf bags & luggage";
+        $vItems["quantity"] = $vQuantity;
+        $vItems["price"]["currency"] = $vDefaultCurrency;
+        $vItems["price"]["amount"] = $vReturnDataP->data->price;
+        $vItems["item_id"] = strval($vPayload["parcels"]["item_id"]);
+        $vItems["weight"]["unit"] = $vWUnit;
+        $vItems["weight"]["value"] = floatval($vWeight);
 
-    if (isset($vPayload["ship_date"])) {
-        $vParam["body"]["ship_date"] = $vPayload["ship_date"];
+        $vParcels["items"][] = $vItems;
+
+        $vParcels["box_type"] = "custom";
+        $vParcels["weight"]["unit"] = $vWUnit;
+        $vParcels["weight"]["value"] = floatval($vWeight * $vQuantity);
+        
+        $vParam["body"]["shipment"]["parcels"][] = $vParcels;
+        $vParam["body"]["shipment"]["delivery_instructions"] = "Handle with care";
+
+        if (isset($vPayload["ship_date"])) {
+            $vParam["body"]["ship_date"] = $vPayload["ship_date"];
+        }
     }
 }
 
@@ -181,35 +156,31 @@ if (count($vResponse) > 0) {
         v::$r = vR(400, $vResponse);
     }
 } else {
-    // print_r($vParam);exit;
     $vReturnData = call_aftership_api($vParam);
 
     if (!isset($vReturnData->data)) {
         echo json_encode($vReturnData);
     } else {
         //Get currency, FedEx return price in USD and DHL returns in EUR, So we need to convert them to store default currency
-        $vParamC["api_url"] =  "currencies";
-        $vParamC["method"] = "GET";
-        $vReturnDataC = call_big_commerce_api($vParamC, "v2");
-        $currencyIndex = findIndexByKey($vReturnDataC, "is_default", true);
-        $vDefaultCurrency = $vReturnDataC[$currencyIndex]->currency_code;
-
-        foreach ($vReturnData->data->rates as $key => $rates) {
-            $vAmount = $rates->total_charge->amount;
-            $vCurrency = $rates->total_charge->currency;
-            $vRatesCurrencyIndex = findIndexByKey($vReturnDataC, "currency_code", $vCurrency);
-            $vFcActualCosts["amount"] = $vAmount + (($vPercentage / 100) * $vAmount);
-            if ($vDefaultCurrency != $vReturnDataC[$vRatesCurrencyIndex]->currency_code) {
-                //Convert currency to store default
-                $vFcActualCosts["amount"] = ($vAmount + (($vPercentage / 100) * $vAmount)) * $vReturnDataC[$vRatesCurrencyIndex]->currency_exchange_rate;
+        if ($vReturnData->data->rates) {
+            foreach ($vReturnData->data->rates as $key => $rates) {
+                $vAmount = $rates->total_charge->amount;
+                $vCurrency = $rates->total_charge->currency;
+                $vRatesCurrencyIndex = findIndexByKey($vReturnDataC, "currency_code", $vCurrency);
+                $vFcActualCosts["amount"] = $vAmount + (($vPercentage / 100) * $vAmount);
+                if ($vDefaultCurrency != $vReturnDataC[$vRatesCurrencyIndex]->currency_code) {
+                    //Convert currency to store default
+                    $vFcActualCosts["amount"] = ($vAmount + (($vPercentage / 100) * $vAmount)) * $vReturnDataC[$vRatesCurrencyIndex]->currency_exchange_rate;
+                }
+                $vFcActualCosts["currency"] = $vDefaultCurrency;
+                $vReturnData->data->rates[$key]->fc_actual_costs = $vFcActualCosts;
             }
-            $vFcActualCosts["currency"] = $vDefaultCurrency;
-            $vReturnData->data->rates[$key]->fc_actual_costs = $vFcActualCosts;
-        }
 
-        if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-            echo json_encode($vReturnData);
-        else
-            v::$r = vR(200, $vReturnData->data);
+            if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
+                echo json_encode($vReturnData);
+            else {
+                v::$r = vR(200, $vReturnData->data);
+            }
+        }
     }
 }
