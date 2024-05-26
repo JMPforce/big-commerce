@@ -162,7 +162,7 @@ if (empty($vPayload["parcels"])) {
         }
     }
 
-    $vPayload["parcels"]["weight"]["unit"] = "kg";
+    $vPayload["parcels"]["weight"]["unit"] = "lb";
     $vPayload["parcels"]["weight"]["value"] = $weight;
     if (count($vResponse) <= 0) {
         $vParam["body"]["shipment"]["parcels"][] = $vPayload["parcels"];
