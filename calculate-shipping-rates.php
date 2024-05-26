@@ -1,12 +1,13 @@
 <?php
 require_once "config.php";
 require_once "functions.php";
+$vPercentage = $GLOBALS["vConfig"]["FC_RATES_PERCENTAGE"];
 $vQueryString = "";
 
 $vResponse = [];
 
 // $shipperAccountIdSandbox[]["id"]  = "3ba41ff5-59a7-4ff0-8333-64a4375c7f21";//USPS
-$shipperAccountIdSandbox[]["id"]  = "6f43fe77-b056-45c3-bce4-9fec4040da0c";//FedEx
+$shipperAccountIdSandbox[]["id"]  = "6f43fe77-b056-45c3-bce4-9fec4040da0c"; //FedEx
 if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
     $vPayload = json_decode(file_get_contents('php://input'), true);
 } else {
@@ -180,11 +181,19 @@ if (count($vResponse) > 0) {
         v::$r = vR(400, $vResponse);
     }
 } else {
+    // print_r($vParam);exit;
     $vReturnData = call_aftership_api($vParam);
 
     if (!isset($vReturnData->data)) {
         echo json_encode($vReturnData);
     } else {
+        foreach ($vReturnData->data->rates as $key => $rates) {
+            $vAmount = $rates->total_charge->amount;
+            $vFcActualCosts["amount"] = $vAmount + (($vPercentage / 100) * $vAmount);
+            $vFcActualCosts["currency"] = $rates->total_charge->currency;
+            $vReturnData->data->rates[$key]->fc_actual_costs = $vFcActualCosts;
+        }
+
         if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
             echo json_encode($vReturnData);
         else
