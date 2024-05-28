@@ -27,32 +27,42 @@ if (count($vResponse) > 0) {
     }
 } else {
     if (is_numeric($vPayload["tracking_code"])) {
-        $vParam["api_url"] =  "orders/" . $vPayload["tracking_code"] . "/shipments";
+        $vParam["api_url"] =  "orders/" . $vOrderId . "/?include=consignments.line_items";
         $vParam["method"] = "GET";
-        unset($vPayload["order_id"]);
-        $vParam["body"] = $vPayload;
+        //order details
+        $vOrderResponseData = call_big_commerce_api($vParam, "v2");
+        if ($vOrderResponseData->id && $vOrderResponseData->status_id == 10 && strtolower($vOrderResponseData->status) == "completed") {
+            $vConnection = db_connection();
+            //fetch cart meta from DB
+            $vSql = "SELECT * FROM {$vTable} WHERE cart_id='" . $vOrderResponseData->cart_id . "' AND label_created=false AND labels is NULL";
+            $vResult = select($vConnection, $vSql);
 
-        $vReturnData = call_big_commerce_api($vParam, "v2");
-        // print_r($vReturnData);
-        if (isset($vReturnData->tracking_number))
-            $tracking_id = $vReturnData->tracking_number;
-        else
-            $tracking_id = $vPayload["tracking_code"];
+            if (isset($vResult) && count($vResult) > 0) {
+
+                $vCartMeta = json_decode($vResult[0]["meta"]);
+                $vShippingData = json_decode($vResult[0]["shipper_info"]);
+                $vLabelData = json_decode($vResult[0]["labels"]);
+                $vShipperInfo = $vShippingData->shipper;
+                $vApiMode = ($vShippingData->api_mode) ? $vShippingData->api_mode : "sandbox";
+
+                closeConnection($vConnection);
+            }
+        }
     } else {
         $tracking_id = $vPayload["tracking_code"];
     }
 
-    $vParam2["api_url"] =  "trackings/".$tracking_id;
-    $vParam2["method"] = "GET";
-    
-    $vReturnData = call_aftership_tracking_api($vParam2);
+    // $vParam2["api_url"] =  "trackings/" . $tracking_id;
+    // $vParam2["method"] = "GET";
+
+    // $vReturnData = call_aftership_tracking_api($vParam2);
     // print_r($vReturnData->data);
-    if (!isset($vReturnData->data)) {
-        echo json_encode($vReturnData);
-    } else {
-        if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-            echo json_encode($vReturnData->data);
-        else
-            v::$r = vR(200, $vReturnData->data);
-    }
+    // if (!isset($vReturnData->data)) {
+    //     echo json_encode($vReturnData);
+    // } else {
+    //     if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
+    //         echo json_encode($vReturnData->data);
+    //     else
+    //         v::$r = vR(200, $vReturnData->data);
+    // }
 }

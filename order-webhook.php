@@ -145,7 +145,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
 
                             // echo json_encode($vParam);
                             $vReturnData = call_aftership_api($vParam);
-                            $vLabelInfo[] = $vReturnData->data;
+                            $vLabelInfo[] = $vReturnData;
                             if (
                                 (isset($vReturnData->meta) && $vReturnData->meta->code == 200)
                                 &&
