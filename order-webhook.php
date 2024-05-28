@@ -26,7 +26,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
     if ($vOrderResponseData->id && $vOrderResponseData->status_id == 10 && strtolower($vOrderResponseData->status) == "completed") {
         $vConnection = db_connection();
         //fetch cart meta from DB
-        $vSql = "SELECT * FROM {$vTable} WHERE cart_id='" . $vOrderResponseData->cart_id . "' AND label_created=false AND label_ids is NULL";
+        $vSql = "SELECT * FROM {$vTable} WHERE cart_id='" . $vOrderResponseData->cart_id . "' AND label_created=false AND labels is NULL";
 
         $vResult = select($vConnection, $vSql);
 
@@ -78,9 +78,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                             $vItems["quantity"] = 1;
                             $vItems["item_id"] = strval($row->product_id);
                             $vItems["origin_country"] = getCountryCode($cart->ship_from->country);
-                            // $units = getUnitsByCountry($cart->ship_from->country);
                             $vParcels["dimension"]["unit"] = $vDUnit;
-                            // $vItems["price"]["currency"] = "USD";
                             $vItems["price"]["currency"] = $vOrderResponseData->currency_code;
                             $vItems["price"]["amount"] = floatval($row->base_price);
 
@@ -109,8 +107,6 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                             $vParam["body"]["custom_fields"]["pick_up_date"] = $cart->ship_from->date;
                             $vParam["body"]["custom_fields"]["drop_off_date"] = $cart->ship_to->date;
 
-                            // $vParam["body"]["shipper_account"]["id"] = $GLOBALS["vConfig"]["AS_SHIPPER_ACCOUNT_ID"];
-                            // $vParam["body"]["service_type"] = $GLOBALS["vConfig"]["AS_SHIPPER_SERVICE_TYPE"];
                             $vParam["body"]["shipper_account"]["id"] = $vShipperId;
                             $vParam["body"]["service_type"] = $vServiceType;
                             $vCustomerName = $vCustomerResponseData->data[0]->first_name;
@@ -130,7 +126,6 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                             $vParam["body"]["shipment"]["ship_from"]["country"] = $cart->ship_from->country;
 
                             $vParam["body"]["shipment"]["ship_to"]["contact_name"] = $vCustomerName;
-                            // $vParam["body"]["shipment"]["ship_to"]["company_name"] = !empty($vCustomerResponseData->data[0]->company) ? $vCustomerResponseData->data[0]->company : "Forecaddie";
                             if ($vCustomerResponseData->data[0]->company)
                                 $vParam["body"]["shipment"]["ship_to"]["company_name"] = $vCustomerResponseData->data[0]->company;
                             $vParam["body"]["shipment"]["ship_to"]["street1"] = $cart->ship_to->address;
@@ -149,7 +144,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                                 $vParam["body"]["customs"]["terms_of_trade"] = "dap";
                             }
 
-                            // echo json_encode($vParam);exit;
+                            
                             $vReturnData = call_aftership_api($vParam);
                             if (
                                 (isset($vReturnData->meta) && $vReturnData->meta->code == 200)
@@ -175,7 +170,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
             }
             if (count($vLabelId) > 0) {
                 $vConnection = db_connection();
-                $vSql = "UPDATE {$vTable} SET label_created=true,label_ids='" . json_encode($vLabelId) . "' WHERE cart_id='" . $vOrderResponseData->cart_id . "'";
+                $vSql = "UPDATE {$vTable} SET label_created=true,labels='" . json_encode($vLabelId) . "' WHERE cart_id='" . $vOrderResponseData->cart_id . "'";
                 $vResult = insert($vConnection, $vSql);
                 closeConnection($vConnection);
             }
