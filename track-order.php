@@ -5,6 +5,7 @@ $vTable = "carts";
 $vQueryString = "";
 $vQuery = "";
 $vResponse = [];
+$vOrder = [];
 parse_str($_SERVER['QUERY_STRING'], $vQuery);
 
 
@@ -27,62 +28,50 @@ if (count($vResponse) > 0) {
         v::$r = vR(400, $vResponse);
     }
 } else {
-    if (is_numeric($vPayload["tracking_code"])) {
-        $vParam["api_url"] =  "orders/" . $vPayload["tracking_code"] . "/?include=consignments.line_items";
-        $vParam["method"] = "GET";
-        //order details
-        $vOrderResponseData = call_big_commerce_api($vParam, "v2");
-        // print_r($vOrderResponseData);
-        if ($vOrderResponseData->id && $vOrderResponseData->status_id == 10 && strtolower($vOrderResponseData->status) == "completed") {
-            $vConnection = db_connection();
-            //fetch cart meta from DB
-            $vSql = "SELECT * FROM {$vTable} WHERE cart_id='" . $vOrderResponseData->cart_id . "' AND label_created=true AND labels is NOT NULL";
-            $vResult = select($vConnection, $vSql);
+    $vParam["api_url"] =  "orders/" . $vPayload["tracking_code"] . "/?include=consignments.line_items";
+    $vParam["method"] = "GET";
+    //order details from Bigcommerce
+    $vOrderResponseData = call_big_commerce_api($vParam, "v2");
+    if ($vOrderResponseData->id && $vOrderResponseData->status_id == 10 && strtolower($vOrderResponseData->status) == "completed") {
+        $vConnection = db_connection();
+        //fetch cart meta from DB
+        $vSql = "SELECT * FROM {$vTable} WHERE cart_id='" . $vOrderResponseData->cart_id . "' AND label_created=true AND labels is NOT NULL";
+        $vResult = select($vConnection, $vSql);
+        if (isset($vResult) && count($vResult) > 0) {
+            //If we have have order ID fetch label info from meta
+            $vParamOM["api_url"] =  "orders/" . $vPayload["tracking_code"] . "/metafields/?namespace=" . urlencode("Label information");
+            $vParamOM["method"] = "GET";
+            $vOrderMetaResponseData = call_big_commerce_api($vParamOM);
+            $vOrder["currency"] = $vOrderResponseData->currency_code;
+            $vOrder["items"] = $vOrderResponseData->consignments[0]->downloads[0]->line_items;
 
-            if (isset($vResult) && count($vResult) > 0) {
-                $vParamOM["api_url"] =  "orders/" . $vPayload["tracking_code"] . "/metafields/?namespace=" . urlencode("Label information");
-                $vParamOM["method"] = "GET";
-                $vOrderMetaResponseData = call_big_commerce_api($vParamOM);
-                // echo json_encode($vOrderMetaResponseData);
-                $vOrder["currency"] = $vOrderResponseData->currency_code;
-                $vOrder["items"] = $vOrderResponseData->consignments[0]->downloads[0]->line_items;
+            $vOrder["shipment"] = json_decode($vResult[0]["meta"]);
+            $vShippingData = json_decode($vResult[0]["shipper_info"]);
+            $vLabelData = json_decode($vResult[0]["labels"]);
+            $vShipperInfo = $vShippingData->shipper;
+            $vApiMode = ($vShippingData->api_mode) ? $vShippingData->api_mode : "sandbox";
 
-                $vOrder["shipment"] = json_decode($vResult[0]["meta"]);
-                $vShippingData = json_decode($vResult[0]["shipper_info"]);
-                $vLabelData = json_decode($vResult[0]["labels"]);
-                $vShipperInfo = $vShippingData->shipper;
-                $vApiMode = ($vShippingData->api_mode) ? $vShippingData->api_mode : "sandbox";
-
-                closeConnection($vConnection);
-                if (!$vOrderMetaResponseData->data) {
-
-
-                    foreach ($vLabelData as $key => $label) {
-                        if ($label->meta->code == 200 && $label->data->status == "created") {
-                            $vFiles[$key]["key"] = $vOrder["items"][$key]->name;
-                            $vFiles[$key]["value"] = $label->data->files->label->url;
-                        } else {
-                            $vResponse["status"] = 400;
-                            $vResponse["error"] = "Label is not created.";
-                        }
+            closeConnection($vConnection);
+            //If don't exist in order meta, then check it in PostgreSQL
+            if (!$vOrderMetaResponseData->data) {
+                foreach ($vLabelData as $key => $label) {
+                    if ($label->meta->code == 200 && $label->data->status == "created") {
+                        $vFiles[$key]["key"] = $vOrder["items"][$key]->name;
+                        $vFiles[$key]["value"] = $label->data->files->label->url;
+                    } else {
+                        $vResponse["status"] = 400;
+                        $vResponse["error"] = "Label is not created.";
                     }
-                    if (count($vFiles) > 0) {
-                        $vOrder["labels"] = $vFiles;
-                    }
-                } else {
-                    $vOrder["labels"] = $vOrderMetaResponseData->data;
                 }
+                if (count($vFiles) > 0) {
+                    $vOrder["labels"] = $vFiles;
+                }
+            } else {
+                $vOrder["labels"] = $vOrderMetaResponseData->data;
             }
         }
-    } else {
-        $tracking_id = $vPayload["tracking_code"];
     }
 
-    // $vParam2["api_url"] =  "trackings/" . $tracking_id;
-    // $vParam2["method"] = "GET";
-
-    // $vReturnData = call_aftership_tracking_api($vParam2);
-    // print_r($vReturnData->data);
     if (count($vResponse) > 0) {
         if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
             echo json_encode($vResponse);
