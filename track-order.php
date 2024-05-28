@@ -27,7 +27,7 @@ if (count($vResponse) > 0) {
     }
 } else {
     if (is_numeric($vPayload["tracking_code"])) {
-        $vParam["api_url"] =  "orders/" . $vOrderId . "/?include=consignments.line_items";
+        $vParam["api_url"] =  "orders/" . $vPayload["tracking_code"] . "/?include=consignments.line_items";
         $vParam["method"] = "GET";
         //order details
         $vOrderResponseData = call_big_commerce_api($vParam, "v2");
@@ -46,6 +46,7 @@ if (count($vResponse) > 0) {
                 $vApiMode = ($vShippingData->api_mode) ? $vShippingData->api_mode : "sandbox";
 
                 closeConnection($vConnection);
+                print_r($vLabelData);
             }
         }
     } else {
