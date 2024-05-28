@@ -32,22 +32,33 @@ if (count($vResponse) > 0) {
         $vParam["method"] = "GET";
         //order details
         $vOrderResponseData = call_big_commerce_api($vParam, "v2");
+        // echo json_encode($vOrderResponseData);
         if ($vOrderResponseData->id && $vOrderResponseData->status_id == 10 && strtolower($vOrderResponseData->status) == "completed") {
             $vConnection = db_connection();
             //fetch cart meta from DB
-            $vSql = "SELECT * FROM {$vTable} WHERE cart_id='" . $vOrderResponseData->cart_id . "' AND label_created=false AND labels is NULL";
+            $vSql = "SELECT * FROM {$vTable} WHERE cart_id='" . $vOrderResponseData->cart_id . "' AND label_created=true AND labels is NOT NULL";
             $vResult = select($vConnection, $vSql);
 
             if (isset($vResult) && count($vResult) > 0) {
 
-                $vCartMeta = json_decode($vResult[0]["meta"]);
+                $vOrder["shipment"] = json_decode($vResult[0]["meta"]);
                 $vShippingData = json_decode($vResult[0]["shipper_info"]);
                 $vLabelData = json_decode($vResult[0]["labels"]);
                 $vShipperInfo = $vShippingData->shipper;
                 $vApiMode = ($vShippingData->api_mode) ? $vShippingData->api_mode : "sandbox";
 
                 closeConnection($vConnection);
-                print_r($vLabelData);
+                foreach ($vLabelData as $key => $label) {
+                    if ($label->meta->code == 200 && $label->data->status == "created") {
+                        $vFiles[] = $label->data->files->label->url;
+                    } else {
+                        $vResponse["status"] = 400;
+                        $vResponse["error"] = "Label is not created.";
+                    }
+                }
+                if(count($vFiles)>0){
+                    $vOrder["labels"]=$vFiles;
+                }
             }
         }
     } else {
@@ -59,12 +70,18 @@ if (count($vResponse) > 0) {
 
     // $vReturnData = call_aftership_tracking_api($vParam2);
     // print_r($vReturnData->data);
-    // if (!isset($vReturnData->data)) {
-    //     echo json_encode($vReturnData);
-    // } else {
-    //     if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-    //         echo json_encode($vReturnData->data);
-    //     else
-    //         v::$r = vR(200, $vReturnData->data);
-    // }
-}
+    if (count($vResponse) > 0) {
+        if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
+            echo json_encode($vResponse);
+        } else {
+            v::$r = vR(400, $vResponse);
+        }
+    } else {
+ 
+            if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
+                echo json_encode($vOrder);
+            else
+                v::$r = vR(200, $vOrder);
+        }
+    }
+
