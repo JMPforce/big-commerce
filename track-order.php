@@ -32,13 +32,14 @@ if (count($vResponse) > 0) {
         $vParam["method"] = "GET";
         //order details
         $vOrderResponseData = call_big_commerce_api($vParam, "v2");
-        // echo json_encode($vOrderResponseData);
+        // print_r($vOrderResponseData);
         if ($vOrderResponseData->id && $vOrderResponseData->status_id == 10 && strtolower($vOrderResponseData->status) == "completed") {
             $vConnection = db_connection();
             //fetch cart meta from DB
             $vSql = "SELECT * FROM {$vTable} WHERE cart_id='" . $vOrderResponseData->cart_id . "' AND label_created=true AND labels is NOT NULL";
             $vResult = select($vConnection, $vSql);
-
+            $vOrder["currency"]=$vOrderResponseData->currency_code;
+            $vOrder["items"]=$vOrderResponseData->consignments[0]->downloads[0]->line_items;
             if (isset($vResult) && count($vResult) > 0) {
 
                 $vOrder["shipment"] = json_decode($vResult[0]["meta"]);
