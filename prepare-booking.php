@@ -89,20 +89,14 @@ if (count($vResponse) > 0) {
     $vParam["api_url"] =  "carts?include=redirect_urls";
     $vParam["method"] = "POST";
 
-    // $vParam["body"]["channel_id"] = 1;
     $vParam["body"]["currency"]["code"] = $vReturnDataC[$currencyIndex]->currency_code;
     $vParam["body"]["locale"] = "en-US";
-    // $vParam["body"]["currency"]["code"] = "EUR";
-    // $vParam["body"]["locale"] = "en-IE";
-    // print_r($vParam);exit;
     $vResponseCartData = call_big_commerce_api($vParam);
-    // echo json_encode($vResponseCartData);exit;
 
     if (!isset($vResponseCartData->data)) {
         echo json_encode($vResponseCartData);
     } else {
         unset($vParam["body"]);
-        // echo json_encode($vResponseCartData);exit;
         $cartId = $vResponseCartData->data->id;
         //stor cart meta 
         $connection = db_connection();
