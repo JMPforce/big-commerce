@@ -2,6 +2,8 @@
 require_once "config.php";
 require_once "functions.php";
 $vTable = "carts";
+$vDUnit = $GLOBALS["vConfig"]["D_UNITS"];
+$vWUnit = $GLOBALS["vConfig"]["W_UNITS"];
 $vResponse = [];
 $vQuery = "";
 $vLabelId = [];
@@ -77,18 +79,18 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                             $vItems["item_id"] = strval($row->product_id);
                             $vItems["origin_country"] = getCountryCode($cart->ship_from->country);
                             // $units = getUnitsByCountry($cart->ship_from->country);
-                            $vParcels["dimension"]["unit"] = "cm";
+                            $vParcels["dimension"]["unit"] = $vDUnit;
                             // $vItems["price"]["currency"] = "USD";
                             $vItems["price"]["currency"] = $vOrderResponseData->currency_code;
                             $vItems["price"]["amount"] = floatval($row->base_price);
 
-                            $vItems["weight"]["unit"] = "kg";
+                            $vItems["weight"]["unit"] = $vWUnit;
                             $vItems["weight"]["value"] = intval($weight);
                             $vTotalWeight = intval($weight);
 
                             $vParcels["items"] = [$vItems];
                             $vParcels["description"] = "Golf bags & luggage";
-                            $vParcels["weight"]["unit"] = "kg";
+                            $vParcels["weight"]["unit"] = $vWUnit;
                             $vParcels["weight"]["value"] = $vTotalWeight;
 
 
