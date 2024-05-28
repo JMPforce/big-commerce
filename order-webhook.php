@@ -6,7 +6,7 @@ $vDUnit = $GLOBALS["vConfig"]["D_UNITS"];
 $vWUnit = $GLOBALS["vConfig"]["W_UNITS"];
 $vResponse = [];
 $vQuery = "";
-$vLabelId = [];
+$vLabelInfo = [];
 parse_str($_SERVER['QUERY_STRING'], $vQuery);
 
 if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
@@ -27,7 +27,6 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
         $vConnection = db_connection();
         //fetch cart meta from DB
         $vSql = "SELECT * FROM {$vTable} WHERE cart_id='" . $vOrderResponseData->cart_id . "' AND label_created=false AND labels is NULL";
-
         $vResult = select($vConnection, $vSql);
 
         if (isset($vResult) && count($vResult) > 0) {
@@ -144,14 +143,15 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                                 $vParam["body"]["customs"]["terms_of_trade"] = "dap";
                             }
 
-                            
+                            // echo json_encode($vParam);
                             $vReturnData = call_aftership_api($vParam);
+                            $vLabelInfo[] = $vReturnData->data;
                             if (
                                 (isset($vReturnData->meta) && $vReturnData->meta->code == 200)
                                 &&
                                 (isset($vReturnData->data) && $vReturnData->data->status = 'created')
                             ) {
-                                $vLabelId[] = $vReturnData->data;
+                                // $vLabelInfo[] = $vReturnData->data;
                                 //create order meta
                                 $vOrderMeta["permission_set"] = "write_and_sf_access";
                                 $vOrderMeta["namespace"] = "Label information";
@@ -168,9 +168,10 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                     }
                 }
             }
-            if (count($vLabelId) > 0) {
+            
+            if (count($vLabelInfo) > 0) {
                 $vConnection = db_connection();
-                $vSql = "UPDATE {$vTable} SET label_created=true,labels='" . json_encode($vLabelId) . "' WHERE cart_id='" . $vOrderResponseData->cart_id . "'";
+                $vSql = "UPDATE {$vTable} SET label_created=true,labels='" . json_encode($vLabelInfo) . "' WHERE cart_id='" . $vOrderResponseData->cart_id . "'";
                 $vResult = insert($vConnection, $vSql);
                 closeConnection($vConnection);
             }
