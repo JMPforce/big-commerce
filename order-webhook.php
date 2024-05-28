@@ -155,7 +155,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                                 //create order meta
                                 $vOrderMeta["permission_set"] = "write_and_sf_access";
                                 $vOrderMeta["namespace"] = "Label information";
-                                $vOrderMeta["key"] = "label URL " .$reference;
+                                $vOrderMeta["key"] = $row->name."#" .$reference;
                                 $vOrderMeta["value"] = $vReturnData->data->files->label->url;
                                 $vOrderMeta["description"] = "Label URL ".$reference;
                                 $vParam["api_url"] =  "orders/" . $vOrderId . "/metafields";

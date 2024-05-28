@@ -38,9 +38,14 @@ if (count($vResponse) > 0) {
             //fetch cart meta from DB
             $vSql = "SELECT * FROM {$vTable} WHERE cart_id='" . $vOrderResponseData->cart_id . "' AND label_created=true AND labels is NOT NULL";
             $vResult = select($vConnection, $vSql);
-            $vOrder["currency"]=$vOrderResponseData->currency_code;
-            $vOrder["items"]=$vOrderResponseData->consignments[0]->downloads[0]->line_items;
+
             if (isset($vResult) && count($vResult) > 0) {
+                $vParamOM["api_url"] =  "orders/" . $vPayload["tracking_code"] . "/metafields/?namespace=" . urlencode("Label information");
+                $vParamOM["method"] = "GET";
+                $vOrderMetaResponseData = call_big_commerce_api($vParamOM);
+                // echo json_encode($vOrderMetaResponseData);
+                $vOrder["currency"] = $vOrderResponseData->currency_code;
+                $vOrder["items"] = $vOrderResponseData->consignments[0]->downloads[0]->line_items;
 
                 $vOrder["shipment"] = json_decode($vResult[0]["meta"]);
                 $vShippingData = json_decode($vResult[0]["shipper_info"]);
@@ -49,16 +54,23 @@ if (count($vResponse) > 0) {
                 $vApiMode = ($vShippingData->api_mode) ? $vShippingData->api_mode : "sandbox";
 
                 closeConnection($vConnection);
-                foreach ($vLabelData as $key => $label) {
-                    if ($label->meta->code == 200 && $label->data->status == "created") {
-                        $vFiles[] = $label->data->files->label->url;
-                    } else {
-                        $vResponse["status"] = 400;
-                        $vResponse["error"] = "Label is not created.";
+                if (!$vOrderMetaResponseData->data) {
+
+
+                    foreach ($vLabelData as $key => $label) {
+                        if ($label->meta->code == 200 && $label->data->status == "created") {
+                            $vFiles[$key]["key"] = $vOrder["items"][$key]->name;
+                            $vFiles[$key]["value"] = $label->data->files->label->url;
+                        } else {
+                            $vResponse["status"] = 400;
+                            $vResponse["error"] = "Label is not created.";
+                        }
                     }
-                }
-                if(count($vFiles)>0){
-                    $vOrder["labels"]=$vFiles;
+                    if (count($vFiles) > 0) {
+                        $vOrder["labels"] = $vFiles;
+                    }
+                } else {
+                    $vOrder["labels"] = $vOrderMetaResponseData->data;
                 }
             }
         }
@@ -78,11 +90,10 @@ if (count($vResponse) > 0) {
             v::$r = vR(400, $vResponse);
         }
     } else {
- 
-            if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
-                echo json_encode($vOrder);
-            else
-                v::$r = vR(200, $vOrder);
-        }
-    }
 
+        if ($_SERVER["SERVER_NAME"] == "big-commerce.local")
+            echo json_encode($vOrder);
+        else
+            v::$r = vR(200, $vOrder);
+    }
+}
