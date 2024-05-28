@@ -42,7 +42,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
             $vParam["api_url"] =  "customers?id:in=" . $vCustomerId;
             $vParam["method"] = "GET";
             $vCustomerResponseData = call_big_commerce_api($vParam);
-
+            vLog($vCustomerResponseData);
             foreach ($vCartMeta as $index => $cart) {
 
                 foreach ($vOrderResponseData->consignments as $data) {
@@ -53,6 +53,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                         $vParam["method"] = "GET";
                         $vItems = [];
                         $vReturnProductData = call_big_commerce_api($vParam);
+                        vLog($vReturnProductData);
                         //find item shipper info
                         $shipperIndex = findIndexByProductId($vShipperInfo, $row->product_id);
                         $vShipperId = $vShipperInfo[$shipperIndex]->shipper_method->shipper_id;
@@ -145,6 +146,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
 
                             // echo json_encode($vParam);
                             $vReturnData = call_aftership_api($vParam);
+                            vLog($vReturnData);
                             $vLabelInfo[] = $vReturnData;
                             if (
                                 (isset($vReturnData->meta) && $vReturnData->meta->code == 200)
@@ -162,6 +164,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                                 $vParam["method"] = "POST";
                                 $vParam["body"] = $vOrderMeta;
                                 $vOrderMetaResponseData = call_big_commerce_api($vParam);
+                                vLog($vOrderMetaResponseData);
                             }
                             echo json_encode($vReturnData);
                         }
