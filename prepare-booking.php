@@ -85,14 +85,14 @@ if (count($vResponse) > 0) {
     $currencyIndex = findIndexByKey($vReturnDataC, "is_default", true);
     
     //create cart
-    $vParam["body"]["customer_id"] = 0;
-    $vParam["api_url"] =  "carts?include=redirect_urls";
-    $vParam["method"] = "POST";
+    $vParamCart["body"]["customer_id"] = 0;
+    $vParamCart["api_url"] =  "carts?include=redirect_urls";
+    $vParamCart["method"] = "POST";
 
-    $vParam["body"]["currency"]["code"] = $vReturnDataC[$currencyIndex]->currency_code;
-    $vParam["body"]["locale"] = "en-US";
-    $vResponseCartData = call_big_commerce_api($vParam);
-
+    $vParamCart["body"]["currency"]["code"] = $vReturnDataC[$currencyIndex]->currency_code;
+    $vParamCart["body"]["locale"] = "en-US";
+    $vResponseCartData = call_big_commerce_api($vParamCart);
+    vLog($vResponseCartData);
     if (!isset($vResponseCartData->data)) {
         echo json_encode($vResponseCartData);
     } else {

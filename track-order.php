@@ -32,6 +32,7 @@ if (count($vResponse) > 0) {
     $vParam["method"] = "GET";
     //order details from Bigcommerce
     $vOrderResponseData = call_big_commerce_api($vParam, "v2");
+    vLog($vOrderResponseData);
     if ($vOrderResponseData->id && $vOrderResponseData->status_id == 10 && strtolower($vOrderResponseData->status) == "completed") {
         $vConnection = db_connection();
         //fetch cart meta from DB
@@ -42,6 +43,7 @@ if (count($vResponse) > 0) {
             $vParamOM["api_url"] =  "orders/" . $vPayload["tracking_code"] . "/metafields/?namespace=" . urlencode("Label information");
             $vParamOM["method"] = "GET";
             $vOrderMetaResponseData = call_big_commerce_api($vParamOM);
+            vLog($vOrderMetaResponseData);
             $vOrder["currency"] = $vOrderResponseData->currency_code;
             $vOrder["items"] = $vOrderResponseData->consignments[0]->downloads[0]->line_items;
 

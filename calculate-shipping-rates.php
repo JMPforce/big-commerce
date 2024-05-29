@@ -7,7 +7,7 @@ $vWUnit = $GLOBALS["vConfig"]["W_UNITS"];
 $vQueryString = "";
 
 $vResponse = [];
-
+//Use for sandbox
 // $shipperAccountIdSandbox[]["id"]  = "3ba41ff5-59a7-4ff0-8333-64a4375c7f21";//USPS
 $shipperAccountIdSandbox[]["id"]  = "6f43fe77-b056-45c3-bce4-9fec4040da0c"; //FedEx
 if ($_SERVER["SERVER_NAME"] == "big-commerce.local") {
@@ -31,6 +31,7 @@ if (isset($vPayload["api_mode"]) && strtolower($vPayload["api_mode"]) == "prod")
 $vParam["method"] = "GET";
 $shipperAccountId = [];
 $vShipperReturnData = call_aftership_api($vParam);
+vLog($vShipperReturnData);
 if (isset($vShipperReturnData->meta) && $vShipperReturnData->meta->code == 200) {
     foreach ($vShipperReturnData->data->shipper_accounts as $key => $shipper) {
         $shipperAccountId[]["id"]  = $shipper->id;
@@ -109,6 +110,7 @@ if (empty($vPayload["parcels"])) {
         $vParamC["api_url"] =  "currencies";
         $vParamC["method"] = "GET";
         $vReturnDataC = call_big_commerce_api($vParamC, "v2");
+        vLog($vReturnDataC);
         $currencyIndex = findIndexByKey($vReturnDataC, "is_default", true);
         $vDefaultCurrency = $vReturnDataC[$currencyIndex]->currency_code;
 
@@ -157,7 +159,7 @@ if (count($vResponse) > 0) {
     }
 } else {
     $vReturnData = call_aftership_api($vParam);
-
+    vLog($vReturnData);
     if (!isset($vReturnData->data)) {
         echo json_encode($vReturnData);
     } else {

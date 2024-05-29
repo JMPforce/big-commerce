@@ -179,7 +179,7 @@ if ($vPayload["data"]["id"] && $vPayload["scope"] = "store/order/created" || $vP
                 closeConnection($vConnection);
             }
         } else {
-            echo "Label already created.";
+            //echo "Label already created.";
         }
     }
 }
